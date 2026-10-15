@@ -65,7 +65,7 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
  <div id="v3" hidden><input id="nn" placeholder="Название"><div class="mu" style="margin-bottom:6px">На 100 г:</div><div class="g3"><div><label>Б</label><input id="np" oninput="nkc()" type="text" inputmode="decimal" autocomplete="off"></div><div><label>Ж</label><input id="nf" oninput="nkc()" type="text" inputmode="decimal" autocomplete="off"></div><div><label>У</label><input id="nc" oninput="nkc()" type="text" inputmode="decimal" autocomplete="off"></div></div><div id="nk" class="mu" style="margin-top:6px;min-height:20px"></div><div class="mu" style="margin:10px 0 6px">Единицы (необязательно)</div><input id="nu" placeholder="шт=50, банка=250"><button class="pb" onclick="mk()">Сохранить</button><button id="dl" class="ln" style="color:var(--dg);width:100%" onclick="rm()">Удалить продукт</button></div>
  <div id="v4" hidden><div class="g3"><div><label>Б, г</label><input id="gp" type="text" inputmode="decimal" autocomplete="off"></div><div><label>Ж, г</label><input id="gf" type="text" inputmode="decimal" autocomplete="off"></div><div><label>У, г</label><input id="gc" type="text" inputmode="decimal" autocomplete="off"></div></div><button class="pb" onclick="sg()">Сохранить</button></div>
  <div id="v6" hidden><div class="hd" style="justify-content:center"><button class="x" onclick="mv(-1)" aria-label="Предыдущий месяц">‹</button><div style="flex:1;text-align:center"><button id="cmn" class="ct"></button><button id="cy" class="ct"></button></div><button class="x" onclick="mv(1)" aria-label="Следующий месяц">›</button></div><div id="cwk" class="cw"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div></div><div id="cg" class="cg"></div><div id="cs" class="mu" style="text-align:center;margin-top:10px"></div><button class="ln" style="width:100%" onclick="pd(today)">Сегодня</button></div>
- <div id="v8" hidden><input id="dn" placeholder="Название блюда" oninput="dsave()"><div id="di"></div><div id="dh" class="mu" style="font-size:12px"></div><button class="ln" onclick="dring()">+ Ингредиент</button><label>Вес готового блюда, г (пусто — сумма ингредиентов)</label><input id="dw" type="text" inputmode="decimal" autocomplete="off" oninput="dsum();dsave()"><div id="ds" class="mu"></div><button class="pb" onclick="dsv()">Сохранить блюдо</button><button class="pb g" onclick="dcn()">Отмена</button><button id="ddl" class="ln" style="color:var(--dg);width:100%" onclick="rm()">Удалить блюдо</button></div>
+ <div id="v8" hidden><input id="dn" placeholder="Название блюда"><div id="di"></div><div id="dh" class="mu" style="font-size:12px"></div><button class="ln" onclick="dring()">+ Ингредиент</button><label>Вес готового блюда, г (пусто — сумма ингредиентов)</label><input id="dw" type="text" inputmode="decimal" autocomplete="off" oninput="dsum()"><div id="ds" class="mu"></div><button class="pb" onclick="dsv()">Сохранить блюдо</button><button id="ddl" class="ln" style="color:var(--dg);width:100%" onclick="rm()">Удалить блюдо</button></div>
  <div id="v7" hidden><div class="mu" style="margin-bottom:8px">Свайп вверх в конце списка открывает</div><div id="sgm" class="seg"></div><div class="mu" style="margin:18px 0 10px">Тема</div><div id="thm" class="seg"></div><div class="mu" style="margin:18px 0 10px">Акцентный цвет</div><div id="swc" class="swc"></div><label class="cc">Свой цвет<input id="cp" type="color" oninput="setAc(this.value,1)"></label></div>
  <div id="v5" hidden><div id="fi" class="mu" style="margin-bottom:4px"></div>
   <div id="fa" hidden><button class="pb" onclick="pf()">Создать файл данных (автосохранение)</button><button class="pb g" onclick="of()">Открыть существующий файл данных</button></div>
@@ -122,7 +122,7 @@ function toast(m){$("tm").textContent=m;$("tt").classList.add("on");clearTimeout
 function sv(n,t){for(let i=1;i<=8;i++){const el=$("v"+i);el.hidden=i!==n;if(i===n&&isOpen){el.classList.remove("fi");void el.offsetWidth;el.classList.add("fi")}}$("st").textContent=t||""}
 const LBL=["Завтрак","Перекус 1","Обед","Перекус 2","Ужин","Перекус 3"];
 function autoMeal(){const h=new Date().getHours()+new Date().getMinutes()/60;return h<11?0:h<12.5?1:h<15?2:h<18?3:h<21?4:5}
-function drawMc(){$("mc").style.display=mode==="add"?"":"none";$("dbn").textContent=mode==="ing"?"← К блюду":(gdr()||{}).nm===""?"🍲 Продолжить черновик блюда":"+ Новое блюдо";$("mc").innerHTML=LBL.map((m,i)=>`<button class="${i===am?"on":""}" onclick="sm(${i})">${m}</button>`).join("")}
+function drawMc(){$("mc").style.display=mode==="add"?"":"none";$("dbn").textContent=mode==="ing"?"← К блюду":"+ Новое блюдо";$("mc").innerHTML=LBL.map((m,i)=>`<button class="${i===am?"on":""}" onclick="sm(${i})">${m}</button>`).join("")}
 function sm(i){am=i;drawMc();$("st").textContent="Добавить: "+LBL[i]}
 function op(m){am=m;mode="add";$("q").value="";lst();drawMc();sv(1,"Добавить: "+LBL[m]);show()}
 function mng(){mode="mng";$("q").value="";lst();drawMc();sv(1,"Все продукты ("+S.db.length+")");show()}
@@ -142,11 +142,11 @@ function su(i){uu=i;$("gr").value="";drawU()}
 function qg(g){$("gr").value=g;pv()}
 function ee(i){const e=S.d[cur][i],pr=S.db.find(x=>x[0]===e.n);ei=i;am=e.m;sel=[e.n,e.p/e.g*100,e.f/e.g*100,e.c/e.g*100,pr&&pr[4]];const k=e.ul&&sel[4]?sel[4].findIndex(x=>x[0]===e.ul):-1;gv("Изменить: "+MEALS[am],k>=0?e.q:e.g,k)}
 function ad(){const q=num($("gr").value),g=q*UM();if(!(g>0))return;const o={m:am,n:sel[0],g,p:sel[1]*g/100,f:sel[2]*g/100,c:sel[3]*g/100};if(uu>=0){o.q=q;o.ul=sel[4][uu][0]}
- if(mode==="ing"){delete o.m;if(ik>=0)dr.i[ik]=o;else dr.i.push(o);ik=-1;dsave();return drawDish()}
+ if(mode==="ing"){delete o.m;if(ik>=0)dr.i[ik]=o;else dr.i.push(o);ik=-1;return drawDish()}
  if(ei>=0)S.d[cur][ei]=o;else{(S.d[cur]=S.d[cur]||[]).push(o);S.uc=S.uc||{};S.uc[sel[0]]=(S.uc[sel[0]]||0)+1}
  if(uu<0){S.lg=S.lg||{};S.lg[sel[0]]=g}try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}save();cl();render()}
 function nw(){ed=-1;["nn","np","nf","nc","nu"].forEach(i=>$(i).value="");nkc();$("dl").hidden=true;sv(3,"Новый продукт")}
-function edit(i){const p0=S.db[i];if(p0[5]){ed=i;pmode=mode;ik=-1;const d=gdr();dr=d&&d.nm===p0[0]?{n:d.n,i:d.i,w:d.w}:{n:p0[0],i:p0[5].i.map(x=>({...x})),w:p0[5].w};return drawDish()}ed=i;const p=S.db[i];$("nn").value=p[0];$("np").value=p[1];$("nf").value=p[2];$("nc").value=p[3];$("nu").value=(p[4]||[]).map(x=>x[0]+"="+x[1]).join(", ");nkc();$("dl").hidden=false;sv(3,"Изменить продукт")}
+function edit(i){const p0=S.db[i];if(p0[5]){ed=i;pmode=mode;ik=-1;dr={n:p0[0],i:p0[5].i.map(x=>({...x})),w:p0[5].w};return drawDish()}ed=i;const p=S.db[i];$("nn").value=p[0];$("np").value=p[1];$("nf").value=p[2];$("nc").value=p[3];$("nu").value=(p[4]||[]).map(x=>x[0]+"="+x[1]).join(", ");nkc();$("dl").hidden=false;sv(3,"Изменить продукт")}
 async function mk(){const n=$("nn").value.trim();if(!n)return;const a=[n,num($("np").value),num($("nf").value),num($("nc").value)],un=$("nu").value.split(",").map(s=>s.split("=")).map(([l,g])=>[(l||"").trim(),num(g)]).filter(x=>x[0]&&x[1]>0);if(un.length)a[4]=un;
  if(a[1]+a[2]+a[3]>100.5&&!await ask("Б+Ж+У больше 100 г на 100 г. Сохранить как есть?","Сохранить"))return;
  if(S.db.some((x,i)=>i!==ed&&nz(x[0])===nz(n))&&!await ask("Продукт «"+n+"» уже есть. Создать ещё один?","Создать"))return;
@@ -234,24 +234,23 @@ function chk(o){if(!o||typeof o!=="object"||!o.g||!o.d||typeof o.d!=="object")th
 function bk(){const j=JSON.stringify(S);try{localStorage.setItem("bju2bak",j)}catch(e){}try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([j],{type:"application/json"}));a.download="bju-backup-"+today+".json";a.click()}catch(e){}}
 function nkc(){const p=num($("np").value),f=num($("nf").value),c=num($("nc").value),s=p+f+c;$("nk").innerHTML=s?`≈ ${kc(p,f,c)} ккал на 100 г`+(s>100.5?` <span style="color:var(--dg)">· Б+Ж+У = ${r1(s)} г, больше 100 г — проверьте</span>`:""):""}
 const dtot=()=>dr.i.reduce((a,x)=>({g:a.g+x.g,p:a.p+x.p,f:a.f+x.f,c:a.c+x.c}),{g:0,p:0,f:0,c:0});
-function dbt(){if(mode==="ing"){drawDish();return}ed=-1;pmode=mode;ik=-1;const d=gdr();dr=d&&d.nm===""?{n:d.n,i:d.i,w:d.w}:{n:"",i:[],w:0};drawDish()}
+function dbt(){if(mode==="ing"){drawDish();return}ed=-1;pmode=mode;ik=-1;dr={n:"",i:[],w:0};drawDish()}
 function drawDish(){$("dn").value=dr.n;$("dw").value=dr.w||"";$("ddl").hidden=ed<0;dlist();sv(8,ed<0?"Новое блюдо":"Изменить блюдо")}
-function dlist(){$("di").innerHTML=dr.i.map((x,k)=>`<div class="it" data-k="${k}"><div><div class="n">${esc(x.n)}</div><div class="mu">${x.ul?x.q+" "+esc(x.ul)+" · ":""}${r1(x.g)} г</div></div><b>${kc(x.p,x.f,x.c)}</b><button class="x" onclick="dx(${k})" aria-label="Удалить">✕</button></div>`).join("");$("dh").textContent=dr.i.length?"Удерживайте ингредиент, чтобы изменить количество":"";dsum()}
-function dx(k){dr.i.splice(k,1);dsave();dlist()}
+function dlist(){$("di").innerHTML=dr.i.map((x,k)=>`<div class="it" data-k="${k}"><div><div class="n">${esc(x.n)}</div><div class="mu">${x.ul?x.q+" "+esc(x.ul)+" · ":""}${r1(x.g)} г</div></div><b>${kc(x.p,x.f,x.c)}</b><button class="x" onclick="dx(${k})" aria-label="Удалить">✕</button></div>`).join("");$("dh").textContent=dr.i.length?"Дважды коснитесь ингредиента, чтобы изменить количество":"";dsum()}
+function dx(k){dr.i.splice(k,1);dlist()}
 function dsum(){const t=dtot(),w=num($("dw").value)||t.g;$("dw").placeholder=t.g?"Сумма: "+r1(t.g):"Вес, г";$("ds").textContent=t.g?`Всего ${kc(t.p,t.f,t.c)} ккал · на 100 г: Б ${r1(t.p/w*100)} · Ж ${r1(t.f/w*100)} · У ${r1(t.c/w*100)} · порция = ${r1(w)} г`:"Добавьте ингредиенты"}
-function dring(){dsave();ik=-1;mode="ing";$("q").value="";lst();drawMc();sv(1,"Ингредиент")}
+function dring(){dsync();ik=-1;mode="ing";$("q").value="";lst();drawMc();sv(1,"Ингредиент")}
 async function dsv(){const n=$("dn").value.trim(),t=dtot(),w=num($("dw").value)||t.g;if(!n||!dr.i.length||!(w>0))return;
  if(S.db.some((x,i)=>i!==ed&&nz(x[0])===nz(n))&&!await ask("Продукт «"+n+"» уже есть. Создать ещё один?","Создать"))return;
- const a=[n,r1(t.p/w*100),r1(t.f/w*100),r1(t.c/w*100),[["порция",r1(w)]],{w:r1(w),i:dr.i}];if(ed>=0)S.db[ed]=a;else S.db.unshift(a);save();dclr();mode=pmode;$("q").value="";lst();drawMc();sv(1,mode==="mng"?"Все продукты ("+S.db.length+")":"Добавить: "+LBL[am])}
-const gdr=()=>{try{return JSON.parse(localStorage.getItem("bjudraft"))}catch(e){return null}},dclr=()=>{try{localStorage.removeItem("bjudraft")}catch(e){}};
-function dsave(){dr.n=$("dn").value;dr.w=num($("dw").value);try{if(!dr.n&&!dr.i.length&&!dr.w)return dclr();localStorage.setItem("bjudraft",JSON.stringify({nm:ed>=0&&S.db[ed]?S.db[ed][0]:"",n:dr.n,w:dr.w,i:dr.i}))}catch(e){}}
-function dcn(){dclr();mode=pmode;$("q").value="";lst();drawMc();sv(1,mode==="mng"?"Все продукты ("+S.db.length+")":"Добавить: "+LBL[am])}
-function dedit(k){dsave();const x=dr.i[k],pr=S.db.find(p=>p[0]===x.n);mode="ing";ik=k;sel=[x.n,x.p/x.g*100,x.f/x.g*100,x.c/x.g*100,pr&&pr[4]];const u=x.ul&&sel[4]?sel[4].findIndex(a=>a[0]===x.ul):-1;gv("Ингредиент",u>=0?x.q:x.g,u)}
-(()=>{let t,x0,y0,on=0;const d=$("di"),row=e=>e.target.closest(".it[data-k]"),go=r=>{if(!r||on)return;on=1;clearTimeout(t);try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+r.dataset.k)};
-d.addEventListener("pointerdown",e=>{const r=row(e);if(!r||e.target.closest(".x"))return;on=0;x0=e.clientX;y0=e.clientY;t=setTimeout(()=>go(r),380)});
-d.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10)clearTimeout(t)});
-["pointerup","pointerleave","pointercancel"].forEach(n=>d.addEventListener(n,()=>clearTimeout(t)));
-d.addEventListener("contextmenu",e=>{e.preventDefault();if(!e.target.closest(".x"))go(row(e))})})();
+ const a=[n,r1(t.p/w*100),r1(t.f/w*100),r1(t.c/w*100),[["порция",r1(w)]],{w:r1(w),i:dr.i}];if(ed>=0)S.db[ed]=a;else S.db.unshift(a);save();mode=pmode;$("q").value="";lst();drawMc();sv(1,mode==="mng"?"Все продукты ("+S.db.length+")":"Добавить: "+LBL[am])}
+function dsync(){dr.n=$("dn").value;dr.w=num($("dw").value)}
+try{localStorage.removeItem("bjudraft")}catch(e){}
+function dedit(k){dsync();const x=dr.i[k],pr=S.db.find(p=>p[0]===x.n);mode="ing";ik=k;sel=[x.n,x.p/x.g*100,x.f/x.g*100,x.c/x.g*100,pr&&pr[4]];const u=x.ul&&sel[4]?sel[4].findIndex(a=>a[0]===x.ul):-1;gv("Ингредиент",u>=0?x.q:x.g,u)}
+(()=>{let x0,y0,mv=0,lk=null,lt=0;const d=$("di");
+d.addEventListener("pointerdown",e=>{x0=e.clientX;y0=e.clientY;mv=0});
+d.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10)mv=1});
+d.addEventListener("pointerup",e=>{const r=e.target.closest(".it[data-k]");if(!r||mv||e.target.closest(".x"))return;const k=r.dataset.k,n=Date.now();
+ if(lk===k&&n-lt<400){lk=null;try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+k)}else{lk=k;lt=n}})})();
 function ask(m,y,dg,one){return new Promise(ok=>{const e=$("dg"),Y=$("dgy"),N=$("dgn"),k=ev=>{if(ev.key==="Escape")f(false)},f=v=>{e.classList.remove("on");Y.onclick=N.onclick=null;document.removeEventListener("keydown",k);ok(v)};$("dgm").textContent=m;Y.textContent=y||"ОК";Y.style.background=dg?"var(--dg)":"";N.style.display=one?"none":"";Y.onclick=()=>f(true);N.onclick=()=>f(false);document.addEventListener("keydown",k);e.classList.add("on");Y.focus()})}
 const say=m=>ask(m,"ОК",0,1);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;const n=iso(new Date());if(n!==today){const f=cur===today;today=n;if(f)cur=n;if(isOpen)cl();render()}});
