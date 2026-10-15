@@ -52,7 +52,7 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.seg button{padding:11px 4px;border-radius:12px;background:var(--bg);border:1px solid var(--bd);font-size:13px;font-weight:600}.seg button.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
 .swc{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:4px}.swc button{aspect-ratio:1;border-radius:50%;border:0}.swc button.on{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--tx)}
 .cc{display:flex;align-items:center;justify-content:space-between;margin-top:16px;font-size:15px;color:var(--tx)}input[type=color]{width:64px;height:40px;padding:2px;margin:0;cursor:pointer}
-#dg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10;padding:24px}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;width:100%;max-width:360px;animation:fi .15s ease-out}#dgm{white-space:pre-line;line-height:1.4}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:14px}#di .it{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#dg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10;padding:24px}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;width:100%;max-width:360px;animation:fi .15s ease-out}#dgm{white-space:pre-line;line-height:1.4}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:14px}#di .it{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}#di .it:active{background:var(--bg)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <div class="nav"><button onclick="go(-1)" aria-label="Назад">‹</button><b id="dt" onclick="cal()" style="cursor:pointer;flex:1">&nbsp;</b><button onclick="go(1)" aria-label="Вперёд">›</button></div>
@@ -247,11 +247,11 @@ const gdr=()=>{try{return JSON.parse(localStorage.getItem("bjudraft"))}catch(e){
 function dsave(){dr.n=$("dn").value;dr.w=num($("dw").value);try{if(!dr.n&&!dr.i.length&&!dr.w)return dclr();localStorage.setItem("bjudraft",JSON.stringify({nm:ed>=0&&S.db[ed]?S.db[ed][0]:"",n:dr.n,w:dr.w,i:dr.i}))}catch(e){}}
 function dcn(){dclr();mode=pmode;$("q").value="";lst();drawMc();sv(1,mode==="mng"?"Все продукты ("+S.db.length+")":"Добавить: "+LBL[am])}
 function dedit(k){dsave();const x=dr.i[k],pr=S.db.find(p=>p[0]===x.n);mode="ing";ik=k;sel=[x.n,x.p/x.g*100,x.f/x.g*100,x.c/x.g*100,pr&&pr[4]];const u=x.ul&&sel[4]?sel[4].findIndex(a=>a[0]===x.ul):-1;gv("Ингредиент",u>=0?x.q:x.g,u)}
-(()=>{let t,x0,y0;const d=$("di"),stop=()=>clearTimeout(t);
-d.addEventListener("pointerdown",e=>{const r=e.target.closest(".it[data-k]");if(!r||e.target.closest(".x"))return;x0=e.clientX;y0=e.clientY;t=setTimeout(()=>{try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+r.dataset.k)},500)});
-d.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10)stop()});
-["pointerup","pointercancel","pointerleave"].forEach(n=>d.addEventListener(n,stop));
-d.addEventListener("contextmenu",e=>e.preventDefault())})();
+(()=>{let t,x0,y0,on=0;const d=$("di"),row=e=>e.target.closest(".it[data-k]"),go=r=>{if(!r||on)return;on=1;clearTimeout(t);try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+r.dataset.k)};
+d.addEventListener("pointerdown",e=>{const r=row(e);if(!r||e.target.closest(".x"))return;on=0;x0=e.clientX;y0=e.clientY;t=setTimeout(()=>go(r),380)});
+d.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10)clearTimeout(t)});
+["pointerup","pointerleave","pointercancel"].forEach(n=>d.addEventListener(n,()=>clearTimeout(t)));
+d.addEventListener("contextmenu",e=>{e.preventDefault();if(!e.target.closest(".x"))go(row(e))})})();
 function ask(m,y,dg,one){return new Promise(ok=>{const e=$("dg"),Y=$("dgy"),N=$("dgn"),k=ev=>{if(ev.key==="Escape")f(false)},f=v=>{e.classList.remove("on");Y.onclick=N.onclick=null;document.removeEventListener("keydown",k);ok(v)};$("dgm").textContent=m;Y.textContent=y||"ОК";Y.style.background=dg?"var(--dg)":"";N.style.display=one?"none":"";Y.onclick=()=>f(true);N.onclick=()=>f(false);document.addEventListener("keydown",k);e.classList.add("on");Y.focus()})}
 const say=m=>ask(m,"ОК",0,1);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;const n=iso(new Date());if(n!==today){const f=cur===today;today=n;if(f)cur=n;if(isOpen)cl();render()}});
