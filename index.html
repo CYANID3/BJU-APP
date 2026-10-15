@@ -246,11 +246,11 @@ async function dsv(){const n=$("dn").value.trim(),t=dtot(),w=num($("dw").value)|
 function dsync(){dr.n=$("dn").value;dr.w=num($("dw").value)}
 try{localStorage.removeItem("bjudraft")}catch(e){}
 function dedit(k){dsync();const x=dr.i[k],pr=S.db.find(p=>p[0]===x.n);mode="ing";ik=k;sel=[x.n,x.p/x.g*100,x.f/x.g*100,x.c/x.g*100,pr&&pr[4]];const u=x.ul&&sel[4]?sel[4].findIndex(a=>a[0]===x.ul):-1;gv("Ингредиент",u>=0?x.q:x.g,u)}
-(()=>{let x0,y0,mv=0,lk=null,lt=0;const d=$("di");
+(()=>{let x0,y0,mv=0,lk=null,lt=0,lf=0;const d=$("di");
 d.addEventListener("pointerdown",e=>{x0=e.clientX;y0=e.clientY;mv=0});
 d.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10)mv=1});
 d.addEventListener("pointerup",e=>{const r=e.target.closest(".it[data-k]");if(!r||mv||e.target.closest(".x"))return;const k=r.dataset.k,n=Date.now();
- if(lk===k&&n-lt<400){lk=null;try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+k)}else{lk=k;lt=n}})})();
+ if(lk===k&&n-lt<400){lk=null;lf=Date.now();try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+k)}else{lk=k;lt=n}});d.addEventListener("dblclick",e=>{const r=e.target.closest(".it[data-k]");if(!r||e.target.closest(".x")||Date.now()-lf<700)return;dedit(+r.dataset.k)})})();
 function ask(m,y,dg,one){return new Promise(ok=>{const e=$("dg"),Y=$("dgy"),N=$("dgn"),k=ev=>{if(ev.key==="Escape")f(false)},f=v=>{e.classList.remove("on");Y.onclick=N.onclick=null;document.removeEventListener("keydown",k);ok(v)};$("dgm").textContent=m;Y.textContent=y||"ОК";Y.style.background=dg?"var(--dg)":"";N.style.display=one?"none":"";Y.onclick=()=>f(true);N.onclick=()=>f(false);document.addEventListener("keydown",k);e.classList.add("on");Y.focus()})}
 const say=m=>ask(m,"ОК",0,1);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;const n=iso(new Date());if(n!==today){const f=cur===today;today=n;if(f)cur=n;if(isOpen)cl();render()}});
