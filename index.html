@@ -96,7 +96,7 @@ function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async
  const dn=d=>Object.keys(d).filter(k=>d[k].length).length;
  if(!await ask("Заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
  bk();adopt(o);store();if(H)wr();cl();render()})}
-function fp(){const t=S.saved?new Date(S.saved).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"ещё не сохранялось";$("fi").textContent=(H?"Автосохранение в файл: включено. ":"")+"Последнее сохранение: "+t+(S.dirty?"; изменений после него: "+S.dirty:"");$("fa").hidden=!window.showSaveFilePicker;sv(5,"Файл с данными");show()}
+function fp(){const t=S.saved?new Date(S.saved).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"ещё не сохранялось";$("fi").textContent=(H?(perm?"Автосохранение в файл: включено. ":"Автосохранение в файл: на паузе (нужно разрешение браузера). "):"")+"Последнее сохранение: "+t+(S.dirty?"; изменений после него: "+S.dirty:"");$("fa").hidden=!window.showSaveFilePicker;sv(5,"Файл с данными");show()}
 const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 let today=iso(new Date());let cur=today;
 const $=id=>document.getElementById(id);
@@ -109,7 +109,7 @@ function render(){
  {const dd=new Date(cur+"T12:00:00"),df=Math.round((dd-new Date(today+"T12:00:00"))/864e5);$("dt").innerHTML=cap(dd.toLocaleDateString("ru-RU",{weekday:"short"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+"<small>"+(df===0?"Сегодня":df===-1?"Вчера":df===1?"Завтра":dd.getFullYear()!==new Date().getFullYear()?dd.getFullYear():"&nbsp;")+"</small>"}
  let h="";
  if(serr)h+=`<div class="bn" style="border-color:var(--dg)"><span>Не удалось сохранить данные в браузере</span><button onclick="fp()">В файл</button></div>`;
- else if(H&&!perm)h+=`<div class="bn"><span>Автосохранение в файл на паузе</span><button onclick="resume()">Продолжить</button></div>`;
+ else if(H&&!perm&&S.dirty>0)h+=`<div class="bn"><span>Автосохранение на паузе · не в файле: ${S.dirty} изм.</span><button onclick="resume()">Продолжить</button></div>`;
  else if(!H&&S.dirty>0)h+=`<div class="bn"><span>Не сохранено в файл: ${S.dirty} изм.</span><button onclick="sh()">Сохранить</button></div>`;
  h+=`<div class="card"><div class="big"><span>${k}</span><span class="mu">из ${gk} ккал</span></div><div class="bar"><i style="width:${Math.min(100,gk?k/gk*100:0)}%;background:${left<0?'var(--dg)':'var(--ac)'}"></i></div><div class="mu" style="margin-bottom:12px">${left>=0?"Осталось "+left:"Перебор "+(-left)} ккал</div>${bar("Белки",t.p,G.p,"var(--p)",1)}${bar("Жиры",t.f,G.f,"var(--f)")}${bar("Углеводы",t.c,G.c,"var(--c)")}${shr(t)}</div>`;
  MEALS.forEach((m,mi)=>{const it=E.map((e,i)=>[e,i]).filter(x=>x[0].m===mi),sk=it.reduce((a,x)=>a+kc(x[0].p,x[0].f,x[0].c),0);
