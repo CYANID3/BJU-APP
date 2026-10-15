@@ -78,7 +78,7 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 <script>
 const BASE=[["Куриная грудка (сырая)",23.6,1.9,.4],["Говядина (сырая)",18.9,12.4,0],["Лосось",20,13,0],["Минтай",16,.9,0],["Яйцо куриное",12.7,11.5,.7],["Творог 5%",17,5,1.8],["Молоко 2,5%",2.8,2.5,4.7],["Кефир 1%",3,1,4],["Йогурт натуральный",5,3.2,3.5],["Сметана 15%",2.6,15,3],["Сыр твёрдый",23,30,0],["Гречка (сухая)",12.6,3.3,62.1],["Рис (сухой)",7,1,74],["Овсяные хлопья",12.3,6.1,59.5],["Макароны (сухие)",11,1.3,70],["Хлеб пшеничный",8.1,1,48.8],["Картофель",2,.4,16.3],["Морковь",1.3,.1,6.9],["Огурец",.8,.1,2.5],["Помидор",.9,.2,3.8],["Яблоко",.4,.4,9.8],["Банан",1.5,.2,21.8],["Масло оливковое",0,99.8,0],["Масло сливочное 82,5%",.5,82.5,.8],["Миндаль",18.6,57.7,13.6],["Сахар",0,0,99.7]];
 const MEALS=["Завтрак","Перекус","Обед","Перекус","Ужин","Перекус"],SN=[0,1,0,1,0,1];
-const VER=2,BUILD="15.10-6";let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
+const VER=2,BUILD="15.10-7";let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
 function adopt(o){if(!o||!o.d||!o.g)return false;if(!o.db)o.db=[...(o.cu||[]),...BASE.map(x=>x.slice())];S=Object.assign({g:{p:120,f:70,c:250},db:[],d:{},saved:0},o);S.v=VER;S.dirty=0;applyAc();return true}
 try{const r=localStorage.getItem("bju2");if(r)adopt(JSON.parse(r))}catch(e){}
 let serr=0;const store=()=>{try{localStorage.setItem("bju2",JSON.stringify(S));serr=0}catch(e){if(!serr)try{toast("Не удалось сохранить данные!")}catch(x){}serr=1}};
@@ -142,7 +142,7 @@ function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v||"
 function drawU(){const us=sel[4]||[],lg=(S.lg||{})[sel[0]];$("un").innerHTML=us.length?[["г"],...us].map((x,i)=>`<button class="${i-1===uu?"on":""}" onclick="su(${i-1})">${esc(x[0])}</button>`).join(""):"";$("gr").placeholder=uu<0?"Масса, г":"Количество, "+sel[4][uu][0];$("ch").innerHTML=(uu<0?[...new Set([lg,50,100,150,200].filter(Boolean))].slice(0,5):[1,2,3,4]).map(g=>`<button onclick="qg(${g})">${g}</button>`).join("");pv()}
 function su(i){uu=i;$("gr").value="";drawU()}
 function qg(g){$("gr").value=g;pv()}
-function ee(i){const e=S.d[cur][i],pr=S.db.find(x=>x[0]===e.n);ei=i;am=e.m;sel=[e.n,e.p/e.g*100,e.f/e.g*100,e.c/e.g*100,pr&&pr[4]];const k=e.ul&&sel[4]?sel[4].findIndex(x=>x[0]===e.ul):-1;gv("Изменить: "+MEALS[am],k>=0?e.q:e.g,k)}
+function ee(i){const e=S.d[cur][i],pr=S.db.find(x=>x[0]===e.n);ei=i;am=e.m;sel=[e.n,e.p/e.g*100,e.f/e.g*100,e.c/e.g*100,pr&&pr[4]];const k=e.ul&&sel[4]?sel[4].findIndex(x=>x[0]===e.ul):-1;gv("Изменить: "+MEALS[am],k>=0?e.q:e.g,k);show()}
 function ad(){const q=num($("gr").value),g=q*UM();if(!(g>0))return;const o={m:am,n:sel[0],g,p:sel[1]*g/100,f:sel[2]*g/100,c:sel[3]*g/100};if(uu>=0){o.q=q;o.ul=sel[4][uu][0]}
  if(mode==="ing"){delete o.m;if(ik>=0)dr.i[ik]=o;else dr.i.push(o);ik=-1;return drawDish()}
  if(ei>=0)S.d[cur][ei]=o;else{(S.d[cur]=S.d[cur]||[]).push(o);S.uc=S.uc||{};S.uc[sel[0]]=(S.uc[sel[0]]||0)+1}
