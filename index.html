@@ -52,25 +52,27 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.seg button{padding:11px 4px;border-radius:12px;background:var(--bg);border:1px solid var(--bd);font-size:13px;font-weight:600}.seg button.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
 .swc{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:4px}.swc button{aspect-ratio:1;border-radius:50%;border:0}.swc button.on{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--tx)}
 .cc{display:flex;align-items:center;justify-content:space-between;margin-top:16px;font-size:15px;color:var(--tx)}input[type=color]{width:64px;height:40px;padding:2px;margin:0;cursor:pointer}
+#dg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10;padding:24px}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;width:100%;max-width:360px;animation:fi .15s ease-out}#dgm{white-space:pre-line;line-height:1.4}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:14px}#di .it{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <div class="nav"><button onclick="go(-1)" aria-label="Назад">‹</button><b id="dt" onclick="cal()" style="cursor:pointer;flex:1">&nbsp;</b><button onclick="go(1)" aria-label="Вперёд">›</button></div>
 <div id="app"></div>
 <div class="bt"><button onclick="goals()"><span>🎯</span>Норма</button><button onclick="mng()"><span>📋</span>Продукты</button><button onclick="fp()"><span>💾</span>Файл</button><button onclick="sets()"><span>⚙️</span>Настройки</button></div>
 <div id="ov"><div class="sh">
- <div class="hd"><b id="st"></b><button class="x" onclick="cl()">✕</button></div>
+ <div class="hd"><b id="st"></b><button class="x" onclick="cl()" aria-label="Закрыть">✕</button></div>
  <div id="v1"><div id="mc" class="mc"></div><input id="q" placeholder="Найти продукт…" oninput="lst()"><div id="ls"></div><button class="ln" onclick="nw()">+ Новый продукт</button><button id="dbn" class="ln" onclick="dbt()">+ Новое блюдо</button></div>
  <div id="v2" hidden><div id="pn" style="font-weight:600;margin-bottom:8px"></div><div id="un" class="mc"></div><div id="ch" class="chips"></div><input id="gr" type="text" inputmode="decimal" autocomplete="off" enterkeyhint="done" placeholder="Масса, г" oninput="pv()" onkeydown="if(event.key==='Enter')ad()"><div id="pvw" class="mu"></div><button id="ab" class="pb" onclick="ad()">Добавить</button></div>
  <div id="v3" hidden><input id="nn" placeholder="Название"><div class="mu" style="margin-bottom:6px">На 100 г:</div><div class="g3"><div><label>Б</label><input id="np" oninput="nkc()" type="text" inputmode="decimal" autocomplete="off"></div><div><label>Ж</label><input id="nf" oninput="nkc()" type="text" inputmode="decimal" autocomplete="off"></div><div><label>У</label><input id="nc" oninput="nkc()" type="text" inputmode="decimal" autocomplete="off"></div></div><div id="nk" class="mu" style="margin-top:6px;min-height:20px"></div><div class="mu" style="margin:10px 0 6px">Единицы (необязательно)</div><input id="nu" placeholder="шт=50, банка=250"><button class="pb" onclick="mk()">Сохранить</button><button id="dl" class="ln" style="color:var(--dg);width:100%" onclick="rm()">Удалить продукт</button></div>
  <div id="v4" hidden><div class="g3"><div><label>Б, г</label><input id="gp" type="text" inputmode="decimal" autocomplete="off"></div><div><label>Ж, г</label><input id="gf" type="text" inputmode="decimal" autocomplete="off"></div><div><label>У, г</label><input id="gc" type="text" inputmode="decimal" autocomplete="off"></div></div><button class="pb" onclick="sg()">Сохранить</button></div>
  <div id="v6" hidden><div class="hd" style="justify-content:center"><button class="x" onclick="mv(-1)" aria-label="Предыдущий месяц">‹</button><div style="flex:1;text-align:center"><button id="cmn" class="ct"></button><button id="cy" class="ct"></button></div><button class="x" onclick="mv(1)" aria-label="Следующий месяц">›</button></div><div id="cwk" class="cw"><div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div></div><div id="cg" class="cg"></div><div id="cs" class="mu" style="text-align:center;margin-top:10px"></div><button class="ln" style="width:100%" onclick="pd(today)">Сегодня</button></div>
- <div id="v8" hidden><input id="dn" placeholder="Название блюда"><div id="di"></div><button class="ln" onclick="dring()">+ Ингредиент</button><label>Вес готового блюда, г (пусто — сумма ингредиентов)</label><input id="dw" type="text" inputmode="decimal" autocomplete="off" oninput="dsum()"><div id="ds" class="mu"></div><button class="pb" onclick="dsv()">Сохранить блюдо</button><button id="ddl" class="ln" style="color:var(--dg);width:100%" onclick="rm()">Удалить блюдо</button></div>
+ <div id="v8" hidden><input id="dn" placeholder="Название блюда" oninput="dsave()"><div id="di"></div><div id="dh" class="mu" style="font-size:12px"></div><button class="ln" onclick="dring()">+ Ингредиент</button><label>Вес готового блюда, г (пусто — сумма ингредиентов)</label><input id="dw" type="text" inputmode="decimal" autocomplete="off" oninput="dsum();dsave()"><div id="ds" class="mu"></div><button class="pb" onclick="dsv()">Сохранить блюдо</button><button class="pb g" onclick="dcn()">Отмена</button><button id="ddl" class="ln" style="color:var(--dg);width:100%" onclick="rm()">Удалить блюдо</button></div>
  <div id="v7" hidden><div class="mu" style="margin-bottom:8px">Свайп вверх в конце списка открывает</div><div id="sgm" class="seg"></div><div class="mu" style="margin:18px 0 10px">Тема</div><div id="thm" class="seg"></div><div class="mu" style="margin:18px 0 10px">Акцентный цвет</div><div id="swc" class="swc"></div><label class="cc">Свой цвет<input id="cp" type="color" oninput="setAc(this.value,1)"></label></div>
  <div id="v5" hidden><div id="fi" class="mu" style="margin-bottom:4px"></div>
   <div id="fa" hidden><button class="pb" onclick="pf()">Создать файл данных (автосохранение)</button><button class="pb g" onclick="of()">Открыть существующий файл данных</button></div>
   <button class="pb g" onclick="sh()">Сохранить копию в файл…</button>
   <label class="pb g">Загрузить данные из файла<input type="file" accept=".json,.txt,application/json,text/plain" hidden onchange="im(this)"></label></div>
 </div></div>
+<div id="dg"><div class="dc" role="alertdialog" aria-modal="true" aria-labelledby="dgm"><div id="dgm"></div><div class="dbs"><button id="dgn" class="pb g">Отмена</button><button id="dgy" class="pb">ОК</button></div></div></div>
 <div id="pu" class="pu"><div class="pi"><b id="pa">↑</b><span id="pt"></span><i></i></div></div>
 <div id="tt" class="tt"><span id="tm"></span><button onclick="undo()">Отменить</button></div>
 <script>
@@ -90,9 +92,9 @@ async function initH(){try{const h=await idb("get");if(!h)return;H=h;perm=(await
 async function pf(){try{H=await showSaveFilePicker({suggestedName:"bju-data.json",...FT});await idb("put",H);await wr();cl()}catch(e){}}
 async function of(){try{const[h]=await showOpenFilePicker(FT);if(adopt(chk(JSON.parse(await(await h.getFile()).text())))){H=h;await idb("put",h);store();cl();render()}}catch(e){}}
 async function sh(){const f=new File([JSON.stringify(S)],"bju-data.json",{type:"text/plain"});try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else{const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download="bju-data.json";a.click()}S.dirty=0;S.saved=Date.now();store();render();fp()}catch(e){}}
-function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(t=>{let o;try{o=chk(JSON.parse(t))}catch(e){return alert("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
+function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async t=>{let o;try{o=chk(JSON.parse(t))}catch(e){return say("Не удалось прочитать файл: "+(e.message||"неверный формат"))}
  const dn=d=>Object.keys(d).filter(k=>d[k].length).length;
- if(!confirm("Заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия."))return;
+ if(!await ask("Заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
  bk();adopt(o);store();if(H)wr();cl();render()})}
 function fp(){const t=S.saved?new Date(S.saved).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"ещё не сохранялось";$("fi").textContent=(H?"Автосохранение в файл: включено. ":"")+"Последнее сохранение: "+t+(S.dirty?"; изменений после него: "+S.dirty:"");$("fa").hidden=!window.showSaveFilePicker;sv(5,"Файл с данными");show()}
 const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
@@ -120,37 +122,37 @@ function toast(m){$("tm").textContent=m;$("tt").classList.add("on");clearTimeout
 function sv(n,t){for(let i=1;i<=8;i++){const el=$("v"+i);el.hidden=i!==n;if(i===n&&isOpen){el.classList.remove("fi");void el.offsetWidth;el.classList.add("fi")}}$("st").textContent=t||""}
 const LBL=["Завтрак","Перекус 1","Обед","Перекус 2","Ужин","Перекус 3"];
 function autoMeal(){const h=new Date().getHours()+new Date().getMinutes()/60;return h<11?0:h<12.5?1:h<15?2:h<18?3:h<21?4:5}
-function drawMc(){$("mc").style.display=mode==="add"?"":"none";$("dbn").textContent=mode==="ing"?"← К блюду":"+ Новое блюдо";$("mc").innerHTML=LBL.map((m,i)=>`<button class="${i===am?"on":""}" onclick="sm(${i})">${m}</button>`).join("")}
+function drawMc(){$("mc").style.display=mode==="add"?"":"none";$("dbn").textContent=mode==="ing"?"← К блюду":(gdr()||{}).nm===""?"🍲 Продолжить черновик блюда":"+ Новое блюдо";$("mc").innerHTML=LBL.map((m,i)=>`<button class="${i===am?"on":""}" onclick="sm(${i})">${m}</button>`).join("")}
 function sm(i){am=i;drawMc();$("st").textContent="Добавить: "+LBL[i]}
 function op(m){am=m;mode="add";$("q").value="";lst();drawMc();sv(1,"Добавить: "+LBL[m]);show()}
 function mng(){mode="mng";$("q").value="";lst();drawMc();sv(1,"Все продукты ("+S.db.length+")");show()}
 const num=v=>parseFloat(String(v).replace(",","."))||0;
 let ei=-1,lastDel=null,tmr,isOpen=false;
 function show(){if(!isOpen){isOpen=true;try{history.pushState({o:1},"")}catch(e){}}$("ov").classList.add("on");document.body.style.overflow="hidden"}
-function closeUI(){if(!isOpen)return;isOpen=false;$("ov").classList.remove("on");document.body.style.overflow="";ei=-1;try{document.activeElement.blur()}catch(e){}}
+function closeUI(){if(!isOpen)return;isOpen=false;if(mode==="ing")mode=pmode;ik=-1;$("ov").classList.remove("on");document.body.style.overflow="";ei=-1;try{document.activeElement.blur()}catch(e){}}
 function cl(){const was=isOpen;closeUI();if(was){try{if(history.state&&history.state.o)history.back()}catch(e){}}}
 function lst(){const q=W($("q").value);IX=[];S.db.forEach((p,i)=>{if(q.every(t=>W(p[0]).some(w=>w.startsWith(t))))IX.push(i)});if(mode==="add"){const u=S.uc||{};IX.sort((a,b)=>(u[S.db[b][0]]||0)-(u[S.db[a][0]]||0))}IX=IX.slice(0,80);
  $("ls").innerHTML=IX.length?IX.map((i,k)=>{const p=S.db[i];return `<button class="pk" onclick="pc(${k})">${p[5]?"🍲 ":""}${esc(p[0])}<div class="mu">Б ${p[1]} · Ж ${p[2]} · У ${p[3]}</div></button>`}).join(""):'<div class="mu" style="padding:8px 0">Ничего не найдено.</div>'}
 function pc(k){const i=IX[k];if(mode==="mng")return edit(i);sel=S.db[i];const u=sel[4]&&sel[4].length?0:-1;gv(mode==="ing"?"Ингредиент":MEALS[am],u<0?(S.lg||{})[sel[0]]:"",u)}
 const UM=()=>uu<0?1:sel[4][uu][1];
 function pv(){const g=num($("gr").value)*UM();$("pvw").textContent=g>0?(uu>=0?r1(g)+" г · ":"")+`Б ${r1(sel[1]*g/100)} · Ж ${r1(sel[2]*g/100)} · У ${r1(sel[3]*g/100)} · ${kc(sel[1]*g/100,sel[2]*g/100,sel[3]*g/100)} ккал`:""}
-function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v||"";$("ab").textContent=ei>=0?"Сохранить":"Добавить";drawU();sv(2,t);setTimeout(()=>{$("gr").focus();$("gr").select()},320)}
+function gv(t,v,u){uu=u==null?-1:u;$("pn").textContent=sel[0];$("gr").value=v||"";$("ab").textContent=ei>=0||ik>=0?"Сохранить":"Добавить";drawU();sv(2,t);setTimeout(()=>{$("gr").focus();$("gr").select()},320)}
 function drawU(){const us=sel[4]||[],lg=(S.lg||{})[sel[0]];$("un").innerHTML=us.length?[["г"],...us].map((x,i)=>`<button class="${i-1===uu?"on":""}" onclick="su(${i-1})">${esc(x[0])}</button>`).join(""):"";$("gr").placeholder=uu<0?"Масса, г":"Количество, "+sel[4][uu][0];$("ch").innerHTML=(uu<0?[...new Set([lg,50,100,150,200].filter(Boolean))].slice(0,5):[1,2,3,4]).map(g=>`<button onclick="qg(${g})">${g}</button>`).join("");pv()}
 function su(i){uu=i;$("gr").value="";drawU()}
 function qg(g){$("gr").value=g;pv()}
 function ee(i){const e=S.d[cur][i],pr=S.db.find(x=>x[0]===e.n);ei=i;am=e.m;sel=[e.n,e.p/e.g*100,e.f/e.g*100,e.c/e.g*100,pr&&pr[4]];const k=e.ul&&sel[4]?sel[4].findIndex(x=>x[0]===e.ul):-1;gv("Изменить: "+MEALS[am],k>=0?e.q:e.g,k)}
 function ad(){const q=num($("gr").value),g=q*UM();if(!(g>0))return;const o={m:am,n:sel[0],g,p:sel[1]*g/100,f:sel[2]*g/100,c:sel[3]*g/100};if(uu>=0){o.q=q;o.ul=sel[4][uu][0]}
- if(mode==="ing"){delete o.m;dr.i.push(o);return drawDish()}
+ if(mode==="ing"){delete o.m;if(ik>=0)dr.i[ik]=o;else dr.i.push(o);ik=-1;dsave();return drawDish()}
  if(ei>=0)S.d[cur][ei]=o;else{(S.d[cur]=S.d[cur]||[]).push(o);S.uc=S.uc||{};S.uc[sel[0]]=(S.uc[sel[0]]||0)+1}
  if(uu<0){S.lg=S.lg||{};S.lg[sel[0]]=g}try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}save();cl();render()}
 function nw(){ed=-1;["nn","np","nf","nc","nu"].forEach(i=>$(i).value="");nkc();$("dl").hidden=true;sv(3,"Новый продукт")}
-function edit(i){const p0=S.db[i];if(p0[5]){ed=i;pmode=mode;dr={n:p0[0],i:p0[5].i.map(x=>({...x})),w:p0[5].w};return drawDish()}ed=i;const p=S.db[i];$("nn").value=p[0];$("np").value=p[1];$("nf").value=p[2];$("nc").value=p[3];$("nu").value=(p[4]||[]).map(x=>x[0]+"="+x[1]).join(", ");nkc();$("dl").hidden=false;sv(3,"Изменить продукт")}
-function mk(){const n=$("nn").value.trim();if(!n)return;const a=[n,num($("np").value),num($("nf").value),num($("nc").value)],un=$("nu").value.split(",").map(s=>s.split("=")).map(([l,g])=>[(l||"").trim(),num(g)]).filter(x=>x[0]&&x[1]>0);if(un.length)a[4]=un;
- if(a[1]+a[2]+a[3]>100.5&&!confirm("Б+Ж+У больше 100 г на 100 г. Сохранить как есть?"))return;
- if(S.db.some((x,i)=>i!==ed&&nz(x[0])===nz(n))&&!confirm("Продукт «"+n+"» уже есть. Создать ещё один?"))return;
+function edit(i){const p0=S.db[i];if(p0[5]){ed=i;pmode=mode;ik=-1;const d=gdr();dr=d&&d.nm===p0[0]?{n:d.n,i:d.i,w:d.w}:{n:p0[0],i:p0[5].i.map(x=>({...x})),w:p0[5].w};return drawDish()}ed=i;const p=S.db[i];$("nn").value=p[0];$("np").value=p[1];$("nf").value=p[2];$("nc").value=p[3];$("nu").value=(p[4]||[]).map(x=>x[0]+"="+x[1]).join(", ");nkc();$("dl").hidden=false;sv(3,"Изменить продукт")}
+async function mk(){const n=$("nn").value.trim();if(!n)return;const a=[n,num($("np").value),num($("nf").value),num($("nc").value)],un=$("nu").value.split(",").map(s=>s.split("=")).map(([l,g])=>[(l||"").trim(),num(g)]).filter(x=>x[0]&&x[1]>0);if(un.length)a[4]=un;
+ if(a[1]+a[2]+a[3]>100.5&&!await ask("Б+Ж+У больше 100 г на 100 г. Сохранить как есть?","Сохранить"))return;
+ if(S.db.some((x,i)=>i!==ed&&nz(x[0])===nz(n))&&!await ask("Продукт «"+n+"» уже есть. Создать ещё один?","Создать"))return;
  if(ed>=0)S.db[ed]=a;else S.db.unshift(a);save();
  if((mode==="add"||mode==="ing")&&ed<0){sel=a;gv(mode==="ing"?"Ингредиент":MEALS[am],"",a[4]?0:-1)}else{$("q").value="";lst();sv(1,"Все продукты ("+S.db.length+")")}}
-function rm(){if(ed<0||!confirm("Удалить «"+S.db[ed][0]+"» из списка? Записи в дневнике останутся."))return;S.db.splice(ed,1);save();$("q").value="";lst();sv(1,"Все продукты ("+S.db.length+")")}
+async function rm(){if(ed<0||!await ask("Удалить «"+S.db[ed][0]+"» из списка? Записи в дневнике останутся.","Удалить",1))return;S.db.splice(ed,1);save();$("q").value="";lst();sv(1,"Все продукты ("+S.db.length+")")}
 function goals(){$("gp").value=S.g.p;$("gf").value=S.g.f;$("gc").value=S.g.c;sv(4,"Норма на день");show()}
 function sg(){S.g={p:num($("gp").value),f:num($("gf").value),c:num($("gc").value)};save();cl();render()}
 let cm=[0,0],tx=null;const cap=s=>s[0].toUpperCase()+s.slice(1);
@@ -166,7 +168,7 @@ function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.sl
  if(cv===0){const n=new Date(y,m+1,0).getDate(),off=(new Date(y,m,1).getDay()+6)%7;let tot=0,days=0;
   for(let i=0;i<off;i++)h+='<div class="cd e"></div>';
   for(let d=1;d<=n;d++){const k=y+"-"+mm(m)+"-"+String(d).padStart(2,"0"),E=S.d[k]||[],s=E.reduce((a,e)=>a+kc(e.p,e.f,e.c),0);if(E.length){tot+=s;days++}
-   h+=`<button class="cd${k===today?' t':''}${k===cur?' s':''}${s>gk?' o':''}" onclick="pd('${k}')">${d}<small>${E.length?s:"&nbsp;"}</small></button>`}
+   h+=`<button class="cd${k===today?' t':''}${k===cur?' s':''}${s>gk?' o':''}" onclick="pd('${k}')" aria-label="${new Date(y,m,d).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})}${k===today?", сегодня":""}${E.length?", "+s+" ккал":", без записей"}"${k===cur?' aria-current="date"':''}>${d}<small>${E.length?s:"&nbsp;"}</small></button>`}
   for(let i=off+n;i<42;i++)h+='<div class="cd e"></div>';
   $("cmn").textContent=MN[m];$("cy").textContent=y;$("cy").onclick=()=>vw(2);$("cmn").onclick=()=>vw(1);
   $("cs").textContent=days?`Дней с записями: ${days} · в среднем ${Math.round(tot/days)} ккал`:"В этом месяце записей нет"}
@@ -219,7 +221,7 @@ addEventListener("touchcancel",()=>{pull(0);gd=0});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
 const nz=s=>String(s).toLowerCase().replace(/ё/g,"е"),W=s=>nz(s).split(/[\s,()%.\-]+/).filter(Boolean),isN=x=>typeof x==="number"&&isFinite(x)&&x>=0;
-let uu=-1,pmode="add",dr={n:"",i:[],w:0};
+let uu=-1,ik=-1,pmode="add",dr={n:"",i:[],w:0};
 function applyTh(){const t=S.set&&S.set.th,r=document.documentElement;if(t==="light"||t==="dark")r.dataset.theme=t;else delete r.dataset.theme}
 function setTh(v){S.set=Object.assign({},S.set,{th:v});save();applyTh();drawSet()}
 function shr(t){const k=t.p*4+t.f*9+t.c*4;return k?`<div class="mu" style="margin-top:2px">Доля ккал: Б ${Math.round(t.p*400/k)}% · Ж ${Math.round(t.f*900/k)}% · У ${Math.round(t.c*400/k)}%</div>`:""}
@@ -232,15 +234,26 @@ function chk(o){if(!o||typeof o!=="object"||!o.g||!o.d||typeof o.d!=="object")th
 function bk(){const j=JSON.stringify(S);try{localStorage.setItem("bju2bak",j)}catch(e){}try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([j],{type:"application/json"}));a.download="bju-backup-"+today+".json";a.click()}catch(e){}}
 function nkc(){const p=num($("np").value),f=num($("nf").value),c=num($("nc").value),s=p+f+c;$("nk").innerHTML=s?`≈ ${kc(p,f,c)} ккал на 100 г`+(s>100.5?` <span style="color:var(--dg)">· Б+Ж+У = ${r1(s)} г, больше 100 г — проверьте</span>`:""):""}
 const dtot=()=>dr.i.reduce((a,x)=>({g:a.g+x.g,p:a.p+x.p,f:a.f+x.f,c:a.c+x.c}),{g:0,p:0,f:0,c:0});
-function dbt(){if(mode==="ing")drawDish();else{ed=-1;pmode=mode;dr={n:"",i:[],w:0};drawDish()}}
+function dbt(){if(mode==="ing"){drawDish();return}ed=-1;pmode=mode;ik=-1;const d=gdr();dr=d&&d.nm===""?{n:d.n,i:d.i,w:d.w}:{n:"",i:[],w:0};drawDish()}
 function drawDish(){$("dn").value=dr.n;$("dw").value=dr.w||"";$("ddl").hidden=ed<0;dlist();sv(8,ed<0?"Новое блюдо":"Изменить блюдо")}
-function dlist(){$("di").innerHTML=dr.i.map((x,k)=>`<div class="it"><div><div class="n">${esc(x.n)}</div><div class="mu">${x.ul?x.q+" "+esc(x.ul)+" · ":""}${r1(x.g)} г</div></div><b>${kc(x.p,x.f,x.c)}</b><button class="x" onclick="dx(${k})" aria-label="Удалить">✕</button></div>`).join("");dsum()}
-function dx(k){dr.i.splice(k,1);dlist()}
+function dlist(){$("di").innerHTML=dr.i.map((x,k)=>`<div class="it" data-k="${k}"><div><div class="n">${esc(x.n)}</div><div class="mu">${x.ul?x.q+" "+esc(x.ul)+" · ":""}${r1(x.g)} г</div></div><b>${kc(x.p,x.f,x.c)}</b><button class="x" onclick="dx(${k})" aria-label="Удалить">✕</button></div>`).join("");$("dh").textContent=dr.i.length?"Удерживайте ингредиент, чтобы изменить количество":"";dsum()}
+function dx(k){dr.i.splice(k,1);dsave();dlist()}
 function dsum(){const t=dtot(),w=num($("dw").value)||t.g;$("dw").placeholder=t.g?"Сумма: "+r1(t.g):"Вес, г";$("ds").textContent=t.g?`Всего ${kc(t.p,t.f,t.c)} ккал · на 100 г: Б ${r1(t.p/w*100)} · Ж ${r1(t.f/w*100)} · У ${r1(t.c/w*100)} · порция = ${r1(w)} г`:"Добавьте ингредиенты"}
-function dring(){dr.n=$("dn").value;dr.w=num($("dw").value);mode="ing";$("q").value="";lst();drawMc();sv(1,"Ингредиент")}
-function dsv(){const n=$("dn").value.trim(),t=dtot(),w=num($("dw").value)||t.g;if(!n||!dr.i.length||!(w>0))return;
- if(S.db.some((x,i)=>i!==ed&&nz(x[0])===nz(n))&&!confirm("Продукт «"+n+"» уже есть. Создать ещё один?"))return;
- const a=[n,r1(t.p/w*100),r1(t.f/w*100),r1(t.c/w*100),[["порция",r1(w)]],{w:r1(w),i:dr.i}];if(ed>=0)S.db[ed]=a;else S.db.unshift(a);save();mode=pmode;$("q").value="";lst();drawMc();sv(1,mode==="mng"?"Все продукты ("+S.db.length+")":"Добавить: "+LBL[am])}
+function dring(){dsave();ik=-1;mode="ing";$("q").value="";lst();drawMc();sv(1,"Ингредиент")}
+async function dsv(){const n=$("dn").value.trim(),t=dtot(),w=num($("dw").value)||t.g;if(!n||!dr.i.length||!(w>0))return;
+ if(S.db.some((x,i)=>i!==ed&&nz(x[0])===nz(n))&&!await ask("Продукт «"+n+"» уже есть. Создать ещё один?","Создать"))return;
+ const a=[n,r1(t.p/w*100),r1(t.f/w*100),r1(t.c/w*100),[["порция",r1(w)]],{w:r1(w),i:dr.i}];if(ed>=0)S.db[ed]=a;else S.db.unshift(a);save();dclr();mode=pmode;$("q").value="";lst();drawMc();sv(1,mode==="mng"?"Все продукты ("+S.db.length+")":"Добавить: "+LBL[am])}
+const gdr=()=>{try{return JSON.parse(localStorage.getItem("bjudraft"))}catch(e){return null}},dclr=()=>{try{localStorage.removeItem("bjudraft")}catch(e){}};
+function dsave(){dr.n=$("dn").value;dr.w=num($("dw").value);try{if(!dr.n&&!dr.i.length&&!dr.w)return dclr();localStorage.setItem("bjudraft",JSON.stringify({nm:ed>=0&&S.db[ed]?S.db[ed][0]:"",n:dr.n,w:dr.w,i:dr.i}))}catch(e){}}
+function dcn(){dclr();mode=pmode;$("q").value="";lst();drawMc();sv(1,mode==="mng"?"Все продукты ("+S.db.length+")":"Добавить: "+LBL[am])}
+function dedit(k){dsave();const x=dr.i[k],pr=S.db.find(p=>p[0]===x.n);mode="ing";ik=k;sel=[x.n,x.p/x.g*100,x.f/x.g*100,x.c/x.g*100,pr&&pr[4]];const u=x.ul&&sel[4]?sel[4].findIndex(a=>a[0]===x.ul):-1;gv("Ингредиент",u>=0?x.q:x.g,u)}
+(()=>{let t,x0,y0;const d=$("di"),stop=()=>clearTimeout(t);
+d.addEventListener("pointerdown",e=>{const r=e.target.closest(".it[data-k]");if(!r||e.target.closest(".x"))return;x0=e.clientX;y0=e.clientY;t=setTimeout(()=>{try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+r.dataset.k)},500)});
+d.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10)stop()});
+["pointerup","pointercancel","pointerleave"].forEach(n=>d.addEventListener(n,stop));
+d.addEventListener("contextmenu",e=>e.preventDefault())})();
+function ask(m,y,dg,one){return new Promise(ok=>{const e=$("dg"),Y=$("dgy"),N=$("dgn"),k=ev=>{if(ev.key==="Escape")f(false)},f=v=>{e.classList.remove("on");Y.onclick=N.onclick=null;document.removeEventListener("keydown",k);ok(v)};$("dgm").textContent=m;Y.textContent=y||"ОК";Y.style.background=dg?"var(--dg)":"";N.style.display=one?"none":"";Y.onclick=()=>f(true);N.onclick=()=>f(false);document.addEventListener("keydown",k);e.classList.add("on");Y.focus()})}
+const say=m=>ask(m,"ОК",0,1);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;const n=iso(new Date());if(n!==today){const f=cur===today;today=n;if(f)cur=n;if(isOpen)cl();render()}});
 applyAc();render();initH();
 {const m=new URLSearchParams(location.search).get("m");if(/^[0-5]$/.test(m||"")){try{history.replaceState(null,"",location.pathname)}catch(e){}op(+m)}}
