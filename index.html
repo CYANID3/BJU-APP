@@ -54,7 +54,7 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 .cc{display:flex;align-items:center;justify-content:space-between;margin-top:16px;font-size:15px;color:var(--tx)}input[type=color]{width:64px;height:40px;padding:2px;margin:0;cursor:pointer}
 #dg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10;padding:24px}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;width:100%;max-width:360px;animation:fi .15s ease-out}#dgm{white-space:pre-line;line-height:1.4}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:14px}#di .it{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}#di .it:active{background:var(--bg)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style></head><body>
+.it{-webkit-user-select:none;user-select:none}</style></head><body>
 <div class="nav"><button onclick="go(-1)" aria-label="Назад">‹</button><b id="dt" onclick="cal()" style="cursor:pointer;flex:1">&nbsp;</b><button onclick="go(1)" aria-label="Вперёд">›</button></div>
 <div id="app"></div>
 <div class="bt"><button onclick="goals()"><span>🎯</span>Норма</button><button onclick="mng()"><span>📋</span>Продукты</button><button onclick="fp()"><span>💾</span>Файл</button><button onclick="sets()"><span>⚙️</span>Настройки</button></div>
@@ -78,14 +78,15 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 <script>
 const BASE=[["Куриная грудка (сырая)",23.6,1.9,.4],["Говядина (сырая)",18.9,12.4,0],["Лосось",20,13,0],["Минтай",16,.9,0],["Яйцо куриное",12.7,11.5,.7],["Творог 5%",17,5,1.8],["Молоко 2,5%",2.8,2.5,4.7],["Кефир 1%",3,1,4],["Йогурт натуральный",5,3.2,3.5],["Сметана 15%",2.6,15,3],["Сыр твёрдый",23,30,0],["Гречка (сухая)",12.6,3.3,62.1],["Рис (сухой)",7,1,74],["Овсяные хлопья",12.3,6.1,59.5],["Макароны (сухие)",11,1.3,70],["Хлеб пшеничный",8.1,1,48.8],["Картофель",2,.4,16.3],["Морковь",1.3,.1,6.9],["Огурец",.8,.1,2.5],["Помидор",.9,.2,3.8],["Яблоко",.4,.4,9.8],["Банан",1.5,.2,21.8],["Масло оливковое",0,99.8,0],["Масло сливочное 82,5%",.5,82.5,.8],["Миндаль",18.6,57.7,13.6],["Сахар",0,0,99.7]];
 const MEALS=["Завтрак","Перекус","Обед","Перекус","Ужин","Перекус"],SN=[0,1,0,1,0,1];
-const VER=2,BUILD="15.10-4";let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
+const VER=2,BUILD="15.10-5";let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
 function adopt(o){if(!o||!o.d||!o.g)return false;if(!o.db)o.db=[...(o.cu||[]),...BASE.map(x=>x.slice())];S=Object.assign({g:{p:120,f:70,c:250},db:[],d:{},saved:0},o);S.v=VER;S.dirty=0;applyAc();return true}
 try{const r=localStorage.getItem("bju2");if(r)adopt(JSON.parse(r))}catch(e){}
 let serr=0;const store=()=>{try{localStorage.setItem("bju2",JSON.stringify(S));serr=0}catch(e){if(!serr)try{toast("Не удалось сохранить данные!")}catch(x){}serr=1}};
 let H=null,perm=true,tm,mode="add",ed=-1,IX=[],am=0,sel=null;
 function save(){S.dirty=(S.dirty||0)+1;store();if(H){clearTimeout(tm);tm=setTimeout(wr,400)}}
 async function wr(){try{if((await H.queryPermission({mode:"readwrite"}))!=="granted"){perm=false;render();return}const w=await H.createWritable();S.saved=Date.now();await w.write(JSON.stringify(S));await w.close();perm=true;S.dirty=0;store();render()}catch(e){perm=false;render()}}
-async function resume(){try{if((await H.requestPermission({mode:"readwrite"}))==="granted"){perm=true;await wr()}}catch(e){}}
+let rq=0;async function resume(){if(rq)return;rq=1;try{if((await H.requestPermission({mode:"readwrite"}))==="granted"){perm=true;await wr()}}catch(e){}rq=0}
+addEventListener("click",()=>{if(H&&!perm)resume()},true);
 const idb=(m,v)=>new Promise((ok,no)=>{const q=indexedDB.open("bju",1);q.onupgradeneeded=()=>q.result.createObjectStore("h");q.onsuccess=()=>{const s=q.result.transaction("h",m==="get"?"readonly":"readwrite").objectStore("h"),r=m==="get"?s.get("f"):s.put(v,"f");r.onsuccess=()=>ok(r.result);r.onerror=()=>no()};q.onerror=()=>no()});
 const FT={types:[{description:"Данные БЖУ",accept:{"application/json":[".json"]}}]};
 async function initH(){try{const h=await idb("get");if(!h)return;H=h;perm=(await h.queryPermission({mode:"readwrite"}))==="granted";if(perm){const o=chk(JSON.parse(await(await h.getFile()).text()));if(!S.dirty&&(o.saved||0)>(S.saved||0)){adopt(o);store()}else if(S.dirty)wr()}render()}catch(e){}}
@@ -114,8 +115,9 @@ function render(){
  h+=`<div class="card"><div class="big"><span>${k}</span><span class="mu">из ${gk} ккал</span></div><div class="bar"><i style="width:${Math.min(100,gk?k/gk*100:0)}%;background:${left<0?'var(--dg)':'var(--ac)'}"></i></div><div class="mu" style="margin-bottom:12px">${left>=0?"Осталось "+left:"Перебор "+(-left)} ккал</div>${bar("Белки",t.p,G.p,"var(--p)",1)}${bar("Жиры",t.f,G.f,"var(--f)")}${bar("Углеводы",t.c,G.c,"var(--c)")}${shr(t)}</div>`;
  MEALS.forEach((m,mi)=>{const it=E.map((e,i)=>[e,i]).filter(x=>x[0].m===mi),sk=it.reduce((a,x)=>a+kc(x[0].p,x[0].f,x[0].c),0);
   h+=`<div class="card${SN[mi]?' sn':''}"><div class="mh"><div><b>${m}</b> <span class="mu">${sk?sk+" ккал":""}</span></div><button class="add" onclick="op(${mi})" aria-label="Добавить"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></button></div>`+
-  it.map(([e,i])=>`<div class="it" data-i="${i}"><div onclick="ee(${i})"><div class="n">${esc(e.n)}</div><div class="mu">${e.ul?e.q+" "+esc(e.ul)+" · ":""}${r1(e.g)} г · Б ${r1(e.p)} · Ж ${r1(e.f)} · У ${r1(e.c)}</div></div><b>${kc(e.p,e.f,e.c)}</b><button class="x" onclick="del(${i})" aria-label="Удалить">✕</button></div>`).join("")+`</div>`});
+  it.map(([e,i])=>`<div class="it" data-i="${i}"><div onclick="tp(${i})"><div class="n">${esc(e.n)}</div><div class="mu">${e.ul?e.q+" "+esc(e.ul)+" · ":""}${r1(e.g)} г · Б ${r1(e.p)} · Ж ${r1(e.f)} · У ${r1(e.c)}</div></div><b>${kc(e.p,e.f,e.c)}</b><button class="x" onclick="del(${i})" aria-label="Удалить">✕</button></div>`).join("")+`</div>`});
  const y=scrollY,old=[...document.querySelectorAll("#app .bar i")].map(i=>i.style.width);$("app").innerHTML=h;scrollTo(0,y);if(old.length)document.querySelectorAll("#app .bar i").forEach((el,k)=>{if(old[k]&&old[k]!==el.style.width)try{el.animate([{width:old[k]},{width:el.style.width}],{duration:380,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}})}
+let lt=0,lti=-1;function tp(i){const n=Date.now();if(lti===i&&n-lt<450){lt=0;lti=-1;ee(i)}else{lt=n;lti=i}}
 function del(i){const[e]=S.d[cur].splice(i,1);lastDel={e,i,k:cur};save();render();toast("Удалено: "+e.n)}
 function undo(){if(!lastDel)return;const{e,i,k}=lastDel;(S.d[k]=S.d[k]||[]).splice(i,0,e);lastDel=null;save();render();$("tt").classList.remove("on")}
 function toast(m){$("tm").textContent=m;$("tt").classList.add("on");clearTimeout(tmr);tmr=setTimeout(()=>$("tt").classList.remove("on"),4500)}
