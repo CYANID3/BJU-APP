@@ -78,7 +78,7 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 <script>
 const BASE=[["Куриная грудка (сырая)",23.6,1.9,.4],["Говядина (сырая)",18.9,12.4,0],["Лосось",20,13,0],["Минтай",16,.9,0],["Яйцо куриное",12.7,11.5,.7],["Творог 5%",17,5,1.8],["Молоко 2,5%",2.8,2.5,4.7],["Кефир 1%",3,1,4],["Йогурт натуральный",5,3.2,3.5],["Сметана 15%",2.6,15,3],["Сыр твёрдый",23,30,0],["Гречка (сухая)",12.6,3.3,62.1],["Рис (сухой)",7,1,74],["Овсяные хлопья",12.3,6.1,59.5],["Макароны (сухие)",11,1.3,70],["Хлеб пшеничный",8.1,1,48.8],["Картофель",2,.4,16.3],["Морковь",1.3,.1,6.9],["Огурец",.8,.1,2.5],["Помидор",.9,.2,3.8],["Яблоко",.4,.4,9.8],["Банан",1.5,.2,21.8],["Масло оливковое",0,99.8,0],["Масло сливочное 82,5%",.5,82.5,.8],["Миндаль",18.6,57.7,13.6],["Сахар",0,0,99.7]];
 const MEALS=["Завтрак","Перекус","Обед","Перекус","Ужин","Перекус"],SN=[0,1,0,1,0,1];
-const VER=2;let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
+const VER=2,BUILD="15.10-4";let S={g:{p:120,f:70,c:250},db:BASE.map(x=>x.slice()),d:{},dirty:0,saved:0};
 function adopt(o){if(!o||!o.d||!o.g)return false;if(!o.db)o.db=[...(o.cu||[]),...BASE.map(x=>x.slice())];S=Object.assign({g:{p:120,f:70,c:250},db:[],d:{},saved:0},o);S.v=VER;S.dirty=0;applyAc();return true}
 try{const r=localStorage.getItem("bju2");if(r)adopt(JSON.parse(r))}catch(e){}
 let serr=0;const store=()=>{try{localStorage.setItem("bju2",JSON.stringify(S));serr=0}catch(e){if(!serr)try{toast("Не удалось сохранить данные!")}catch(x){}serr=1}};
@@ -96,7 +96,7 @@ function im(el){const f=el.files[0];el.value="";if(!f)return;f.text().then(async
  const dn=d=>Object.keys(d).filter(k=>d[k].length).length;
  if(!await ask("Заменить текущие данные (дней с записями: "+dn(S.d)+") данными из файла (дней: "+dn(o.d)+")?\nПеред заменой будет сохранена резервная копия.","Заменить",1))return;
  bk();adopt(o);store();if(H)wr();cl();render()})}
-function fp(){const t=S.saved?new Date(S.saved).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"ещё не сохранялось";$("fi").textContent=(H?(perm?"Автосохранение в файл: включено. ":"Автосохранение в файл: на паузе (нужно разрешение браузера). "):"")+"Последнее сохранение: "+t+(S.dirty?"; изменений после него: "+S.dirty:"");$("fa").hidden=!window.showSaveFilePicker;sv(5,"Файл с данными");show()}
+function fp(){const t=S.saved?new Date(S.saved).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}):"ещё не сохранялось";$("fi").textContent=(H?(perm?"Автосохранение в файл: включено. ":"Автосохранение в файл: на паузе (нужно разрешение браузера). "):"")+"Последнее сохранение: "+t+(S.dirty?"; изменений после него: "+S.dirty:"")+". Версия сборки: "+BUILD;$("fa").hidden=!window.showSaveFilePicker;sv(5,"Файл с данными");show()}
 const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 let today=iso(new Date());let cur=today;
 const $=id=>document.getElementById(id);
@@ -246,11 +246,9 @@ async function dsv(){const n=$("dn").value.trim(),t=dtot(),w=num($("dw").value)|
 function dsync(){dr.n=$("dn").value;dr.w=num($("dw").value)}
 try{localStorage.removeItem("bjudraft")}catch(e){}
 function dedit(k){dsync();const x=dr.i[k],pr=S.db.find(p=>p[0]===x.n);mode="ing";ik=k;sel=[x.n,x.p/x.g*100,x.f/x.g*100,x.c/x.g*100,pr&&pr[4]];const u=x.ul&&sel[4]?sel[4].findIndex(a=>a[0]===x.ul):-1;gv("Ингредиент",u>=0?x.q:x.g,u)}
-(()=>{let x0,y0,mv=0,lk=null,lt=0,lf=0;const d=$("di");
-d.addEventListener("pointerdown",e=>{x0=e.clientX;y0=e.clientY;mv=0});
-d.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10)mv=1});
-d.addEventListener("pointerup",e=>{const r=e.target.closest(".it[data-k]");if(!r||mv||e.target.closest(".x"))return;const k=r.dataset.k,n=Date.now();
- if(lk===k&&n-lt<400){lk=null;lf=Date.now();try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+k)}else{lk=k;lt=n}});d.addEventListener("dblclick",e=>{const r=e.target.closest(".it[data-k]");if(!r||e.target.closest(".x")||Date.now()-lf<700)return;dedit(+r.dataset.k)})})();
+(()=>{let lk=null,lt=0;const d=$("di");
+d.addEventListener("click",e=>{const r=e.target.closest(".it[data-k]");if(!r||e.target.closest(".x"))return;const k=r.dataset.k,n=Date.now();
+ if(lk===k&&n-lt<600){lk=null;try{navigator.vibrate&&navigator.vibrate(10)}catch(z){}dedit(+k)}else{lk=k;lt=n}})})();
 function ask(m,y,dg,one){return new Promise(ok=>{const e=$("dg"),Y=$("dgy"),N=$("dgn"),k=ev=>{if(ev.key==="Escape")f(false)},f=v=>{e.classList.remove("on");Y.onclick=N.onclick=null;document.removeEventListener("keydown",k);ok(v)};$("dgm").textContent=m;Y.textContent=y||"ОК";Y.style.background=dg?"var(--dg)":"";N.style.display=one?"none":"";Y.onclick=()=>f(true);N.onclick=()=>f(false);document.addEventListener("keydown",k);e.classList.add("on");Y.focus()})}
 const say=m=>ask(m,"ОК",0,1);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)return;const n=iso(new Date());if(n!==today){const f=cur===today;today=n;if(f)cur=n;if(isOpen)cl();render()}});
