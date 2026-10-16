@@ -215,25 +215,26 @@ function swAct(){return(S.set&&S.set.sw)||"off"}
 function swipeAct(){if(swAct()==="prod"){mode="mng";drawMc();nw();show()}else op(autoMeal())}
 const PRE=["","#22a06b","#14b8a6","#6366f1","#8b5cf6","#e5589a","#e5484d","#f08a24","#f5c518","#64748b"],SWL=[["meal","Приём пищи"],["prod","Новый продукт"],["off","Выкл."]];
 function sets(){drawSet();sv(7,"Настройки");show()}
-function drawSet(k){$("dwd").textContent={cal:"Всегда открывает календарь.",smart:"На другом дне возвращает к сегодня, на сегодняшнем открывает календарь.",off:"Жест отключён."}[dwAct()];$("dwm").innerHTML=[["cal","Календарь"],["smart","К сегодня / календарь"],["off","Выкл."]].map(([v,t])=>`<button class="${dwAct()===v?"on":""}" onclick="setDw('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
+function drawSet(k){$("dwd").textContent={cal:"Всегда открывает календарь.",today:"Возвращает к сегодняшнему дню. На сегодняшнем дне ничего не делает.",off:"Жест отключён."}[dwAct()];$("dwm").innerHTML=[["cal","Календарь"],["today","К сегодня"],["off","Выкл."]].map(([v,t])=>`<button class="${dwAct()===v?"on":""}" onclick="setDw('${v}')">${t}</button>`).join("");const a=swAct(),c=(S.set&&S.set.ac)||"",th=(S.set&&S.set.th)||"auto";$("thm").innerHTML=[["auto","Авто"],["light","Светлая"],["dark","Тёмная"]].map(([v,t])=>`<button class="${th===v?"on":""}" onclick="setTh('${v}')">${t}</button>`).join("");
  $("sgm").innerHTML=SWL.map(([v,t])=>`<button class="${a===v?"on":""}" onclick="setSw('${v}')">${t}</button>`).join("");
  $("swc").innerHTML=PRE.map(h=>`<button class="${c===h?"on":""}" style="background:${h||"#3b82f6"}" onclick="setAc('${h}')" aria-label="Цвет"></button>`).join("");
  if(!k)$("cp").value=c||"#3b82f6"}
 function setSw(v){S.set=Object.assign({},S.set,{sw:v});saveq();drawSet()}
 function setAc(h,k){S.set=Object.assign({},S.set,{ac:h});saveq();applyAc();drawSet(k)}
 const TH=110;let rd=0;
-function pull(v,dn){const u=$("pu"),a=dn?dwAct():swAct();if(v<10||a==="off"){u.style.opacity=0;u.style.transform="translateY("+(dn?-24:24)+"px)";u.classList.remove("rdy");rd=0;return}
+function pull(v,dn){const u=$("pu"),a=dn?(dwOn()?"on":"off"):swAct();if(v<10||a==="off"){u.style.opacity=0;u.style.transform="translateY("+(dn?-24:24)+"px)";u.classList.remove("rdy");rd=0;return}
  const p=Math.min(1,v/TH),r=p>=1;if(r&&!rd){try{navigator.vibrate&&navigator.vibrate(12)}catch(x){}}rd=r;u.classList.toggle("tp",!!dn);
  u.style.opacity=Math.min(1,p*1.6);u.style.transform=`translateY(${(1-p)*(dn?-24:24)}px)`;u.style.setProperty("--p",p);u.classList.toggle("rdy",r);
- $("pt").textContent=dn?(r?(dwAct()==="smart"&&cur!==today?"Отпустите — к сегодня":"Отпустите — календарь"):"Потяните ниже"):r?(a==="prod"?"Отпустите — новый продукт":"Отпустите — добавить: "+LBL[autoMeal()]):"Потяните выше";$("pa").textContent=dn?(r?"✓":"↓"):r?"+":"↑"}
-function dwAct(){return(S.set&&S.set.dw)||"smart"}
-function dwDo(){if(dwAct()==="smart"&&cur!==today){const d=today>cur?1:-1;slide($("app"),d,()=>{cur=today;render()})}else cal()}
+ $("pt").textContent=dn?(r?(dwAct()==="today"?"Отпустите — к сегодня":"Отпустите — календарь"):"Потяните ниже"):r?(a==="prod"?"Отпустите — новый продукт":"Отпустите — добавить: "+LBL[autoMeal()]):"Потяните выше";$("pa").textContent=dn?(r?"✓":"↓"):r?"+":"↑"}
+function dwAct(){const v=S.set&&S.set.dw;return v==="today"||v==="off"?v:"cal"}
+function dwOn(){const a=dwAct();return a==="cal"||(a==="today"&&cur!==today)}
+function dwDo(){if(dwAct()==="today"){if(cur!==today){const d=today>cur?1:-1;slide($("app"),d,()=>{cur=today;render()})}}else if(dwAct()==="cal")cal()}
 function setDw(v){S.set=Object.assign({},S.set,{dw:v});saveq();drawSet()}
 addEventListener("touchmove",e=>{if(isOpen)return;const t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(!gd){if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)*1.5)gd=1;else if(Math.abs(dy)>14)gd=2}
- if(gd===2&&ab&&dy<0&&Math.abs(dx)<60)pull(-dy);else if(gd===2&&at&&dy>0&&Math.abs(dx)<60&&dwAct()!=="off")pull(dy,1);else pull(0)},{passive:true});
+ if(gd===2&&ab&&dy<0&&Math.abs(dx)<60)pull(-dy);else if(gd===2&&at&&dy>0&&Math.abs(dx)<60&&dwOn())pull(dy,1);else pull(0)},{passive:true});
 addEventListener("touchend",e=>{pull(0);if(isOpen||!gd)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy,g=gd;gd=0;
  if(g===1&&Math.abs(dx)>70)go(dx<0?1:-1);
- else if(g===2&&at&&dy>TH&&Math.abs(dx)<60&&dwAct()!=="off")dwDo();
+ else if(g===2&&at&&dy>TH&&Math.abs(dx)<60&&dwOn())dwDo();
  else if(g===2&&ab&&dy<-TH&&Math.abs(dx)<60&&swAct()!=="off")swipeAct()});
 addEventListener("touchcancel",()=>{pull(0);gd=0});
 (()=>{const h=document.querySelector("#ov .hd"),s=document.querySelector("#ov .sh");let y0=null,dy=0;
