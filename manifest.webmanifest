@@ -76,5 +76,13 @@
     }
    ]
   }
+ ],
+ "id": "./",
+ "lang": "ru",
+ "description": "Дневник питания: калории, белки, жиры, углеводы",
+ "categories": [
+  "health",
+  "food",
+  "lifestyle"
  ]
 }
