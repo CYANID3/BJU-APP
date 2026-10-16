@@ -7,9 +7,9 @@
 :root{--bg:#f5f6f8;--card:#fff;--tx:#1d2330;--mu:#6b7280;--bd:#e3e6ec;--ac:#2f7de1;--p:#2f7de1;--f:#e8a32b;--c:#35a66b;--dg:#d64545;--on:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171c;--card:#1e232b;--tx:#eceff4;--mu:#98a1b0;--bd:#2c333d;--ac:#5b9cf0;--p:#5b9cf0;--f:#f0b94d;--c:#4cc48a;--dg:#ef6b6b}}
 :root[data-theme="dark"]{--bg:#14171c;--card:#1e232b;--tx:#eceff4;--mu:#98a1b0;--bd:#2c333d;--ac:#5b9cf0;--p:#5b9cf0;--f:#f0b94d;--c:#4cc48a;--dg:#ef6b6b}
-html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}#app{will-change:transform,opacity}
-body{margin:0 auto;background:var(--bg);color:var(--tx);font:16px/1.35 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;max-width:520px;padding:12px 12px 40px}
+html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:pan-y;overflow-x:clip;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}#app{will-change:transform,opacity;backface-visibility:hidden}.it{transition:background .15s}.it:active{background:var(--bg)}.nav button:active,.add:active{transform:scale(.9)}
+body{margin:0 auto;background:var(--bg);color:var(--tx);font:16px/1.35 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;max-width:520px;padding:12px 12px 40px;overflow-x:clip}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;transition:transform .12s,opacity .12s;-webkit-user-select:none;user-select:none}button:active{transform:scale(.96);opacity:.85}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
 .sn{padding:10px 14px}
@@ -55,7 +55,7 @@ html,body,.sh{scrollbar-width:none;-ms-overflow-style:none}html::-webkit-scrollb
 #dg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10;padding:24px}#dg.on{display:flex}.dc{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;width:100%;max-width:360px;animation:fi .15s ease-out}#dgm{white-space:pre-line;line-height:1.4}.dbs{display:flex;gap:8px}.dbs .pb{flex:1;margin-top:14px}#di .it{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}#di .it:active{background:var(--bg)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .it{-webkit-user-select:none;user-select:none}:root{color-scheme:light dark}:root[data-theme="light"]{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}.x{width:44px;height:44px}.cd small{font-size:11px}label.pb{font-size:16px;color:var(--tx)}.hint{margin:-2px 4px 14px;font-size:13px}[hidden]{display:none!important}.bn{padding:8px 12px;margin-bottom:8px}.tt{border:1px solid var(--ac)}.pu.tp{bottom:auto;top:calc(64px + env(safe-area-inset-top,0px))}</style></head><body>
-<div class="nav"><button onclick="go(-1)" aria-label="Назад">‹</button><b id="dt" role="button" tabindex="0" onkeydown="if(event.key==='Enter')cal()" onclick="event.target.dataset.t?(cur=today,render()):cal()" style="cursor:pointer;flex:1">&nbsp;</b><button onclick="go(1)" aria-label="Вперёд">›</button></div>
+<div class="nav"><button onclick="go(-1)" aria-label="Назад">‹</button><b id="dt" role="button" tabindex="0" onkeydown="if(event.key==='Enter')cal()" onclick="event.target.dataset.t?(cur=today,render(),head()):cal()" style="cursor:pointer;flex:1">&nbsp;</b><button onclick="go(1)" aria-label="Вперёд">›</button></div>
 <div id="app"></div>
 <div class="bt"><button onclick="goals()"><span>🎯</span>Норма</button><button onclick="mng()"><span>📋</span>Продукты</button><button onclick="fp()"><span>💾</span>Файл</button><button onclick="sets()"><span>⚙️</span>Настройки</button></div>
 <div id="ov"><div class="sh">
@@ -106,11 +106,14 @@ let today=iso(new Date());let cur=today;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const r1=x=>Math.round(x*10)/10,kc=(p,f,c)=>Math.round(p*4+f*9+c*4),dk=E=>kc(E.reduce((a,e)=>a+e.p,0),E.reduce((a,e)=>a+e.f,0),E.reduce((a,e)=>a+e.c,0));
-function go(n){slide($("app"),n,()=>{const d=new Date(cur+"T12:00:00");d.setDate(d.getDate()+n);cur=iso(d);render()})}
+function shiftDay(c,n){const d=new Date(c+"T12:00:00");d.setDate(d.getDate()+n);return iso(d)}
+function hap(ms){try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}}
+function go(n){if(!GQ)hap(6);if(!NABS){NP=shiftDay(NP||cur,n);head(NP)}slide($("app"),n,()=>{cur=shiftDay(cur,n)})}
 function bar(l,v,g,col,np){return `<div class="row"><span>${l}</span><span class="mu">${r1(v)} / ${g} г · ${v>g?"сверх "+r1(v-g):"осталось "+r1(g-v)}</span></div><div class="bar"><i style="width:${Math.min(100,g?v/g*100:0)}%;background:${v>g&&!np?'var(--dg)':col}"></i></div>`}
-function render(){
+function head(c){c=c||cur;const dd=new Date(c+"T12:00:00"),df=Math.round((dd-new Date(today+"T12:00:00"))/864e5);$("dt").innerHTML=cap(dd.toLocaleDateString("ru-RU",{weekday:"short"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+" ▾<small>"+(df!==0?"<span data-t=\"1\" style=\"color:var(--act,var(--ac));font-weight:600\">К сегодня</span> · ":"")+(df===0?"Сегодня":df===-1?"Вчера":df===1?"Завтра":dd.getFullYear()!==new Date().getFullYear()?dd.getFullYear():"&nbsp;")+"</small>"}
+function render(){if(RDEF)return;
  const E=S.d[cur]||[],t=E.reduce((a,e)=>({p:a.p+e.p,f:a.f+e.f,c:a.c+e.c}),{p:0,f:0,c:0}),G=S.g,gk=kc(G.p,G.f,G.c),k=kc(t.p,t.f,t.c),left=gk-k;
- {const dd=new Date(cur+"T12:00:00"),df=Math.round((dd-new Date(today+"T12:00:00"))/864e5);$("dt").innerHTML=cap(dd.toLocaleDateString("ru-RU",{weekday:"short"}))+", "+dd.toLocaleDateString("ru-RU",{day:"numeric",month:"long"})+" ▾<small>"+(df!==0?"<span data-t=\"1\" style=\"color:var(--act,var(--ac));font-weight:600\">К сегодня</span> · ":"")+(df===0?"Сегодня":df===-1?"Вчера":df===1?"Завтра":dd.getFullYear()!==new Date().getFullYear()?dd.getFullYear():"&nbsp;")+"</small>"}
+ head();
  let h="";
  {const q=new Date(cur+"T12:00:00");q.setDate(q.getDate()-1);const pk=iso(q);if(!E.length&&(S.d[pk]||[]).length)h+=`<div class="bn"><span>Повторить предыдущий день?</span><button onclick="cpy('${pk}')">Копировать</button></div>`}
  if(serr)h+=`<div class="bn" style="border-color:var(--dg)"><span>Не удалось сохранить данные в браузере</span><button onclick="fp()">В файл</button></div>`;
@@ -188,11 +191,23 @@ function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.sl
  else{const st=Math.floor(y/12)*12;for(let i=0;i<12;i++){const yr=st+i;h+=`<button class="cd${yr===ty?' t':''}${yr===y?' s':''}" onclick="py(${yr})">${yr}<small>&nbsp;</small></button>`}
   $("cy").textContent=st+"–"+(st+11);$("cy").onclick=()=>{cv=cb===1?1:0;drawCal();fade($("cg"))};$("cs").textContent=""}
  g.innerHTML=h}
-function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map(e=>({...e}));cpm=-1;if(k===cur){cl();return}(S.d[k]=S.d[k]||[]).push(...it);cl();cur=k;save();render();toast("Скопировано записей: "+it.length);return}if(k===cur){cl();return}const dir=k>cur?1:-1;cl();slide($("app"),dir,()=>{cur=k;render()})}
+function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map(e=>({...e}));cpm=-1;if(k===cur){cl();return}(S.d[k]=S.d[k]||[]).push(...it);cl();cur=k;save();render();toast("Скопировано записей: "+it.length);return}if(k===cur){cl();return}const dir=k>cur?1:-1;cl();NABS=1;slide($("app"),dir,()=>{cur=k})}
 $("v6").addEventListener("touchstart",e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
 $("v6").addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;tx=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)mv(dx<0?1:-1)});
-let NAV=0;const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;function slide(el,n,fn){NAV=1;try{fn()}finally{NAV=0}if(RM()||!el.animate)return;
- try{if(el._a)el._a.cancel();const a=el._a=el.animate([{opacity:.3,transform:`translateX(${n*28}px)`},{opacity:1,transform:"none"}],{duration:200,easing:"cubic-bezier(.22,1,.36,1)"});a.onfinish=a.oncancel=()=>{if(el._a===a)el._a=null}}catch(e){}}
+let NAV=0,RDEF=0,NF=[],NB=0,ND=1,NP=null,NABS=0,GQ=0;const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
+function curX(el){try{const t=getComputedStyle(el).transform;return t&&t!=="none"?new DOMMatrix(t).m41:0}catch(e){return 0}}
+function slide(el,n,fn){
+ if(el.id!=="app"){fn();if(RM()||!el.animate)return;try{el.animate([{opacity:.3,transform:`translateX(${n*28}px)`},{opacity:1,transform:"none"}],{duration:200,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}return}
+ if(RM()||!el.animate){NABS=0;fn();render();return}
+ NF.push(fn);ND=n>0?1:-1;if(!NB)pump(el)}
+function pump(el){NB=1;const x=curX(el),o=parseFloat(getComputedStyle(el).opacity)||1,a=el._a;el._a=null;if(a)a.cancel();
+ const d=ND;let out;try{out=el.animate([{transform:`translateX(${x}px)`,opacity:o},{transform:`translateX(${-d*40}px)`,opacity:0}],{duration:110,easing:"cubic-bezier(.4,0,1,1)",fill:"forwards"})}catch(e){NB=0;apply(el,null,d);return}
+ out.onfinish=()=>apply(el,out,d);setTimeout(()=>{if(NB&&el._o===out)apply(el,out,d)},400);el._o=out}
+function apply(el,out,d){if(out){if(out._d)return;out._d=1}
+ const fns=NF;NF=[];NP=null;NABS=0;NB=0;NAV=1;RDEF=1;try{fns.forEach(f=>f())}finally{RDEF=0}
+ try{render();head()}finally{NAV=0}
+ try{const inn=el.animate([{transform:`translateX(${d*40}px)`,opacity:0},{transform:"none",opacity:1}],{duration:260,easing:"cubic-bezier(.16,1,.3,1)"});el._a=inn;inn.onfinish=inn.oncancel=()=>{if(el._a===inn)el._a=null}}catch(e){}
+ if(out)out.cancel()}
 function fade(el){if(RM())return;try{el.animate([{opacity:0,transform:"scale(.96)"},{opacity:1,transform:"none"}],{duration:200,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
 const vt=()=>mode==="mng"?"Все продукты ("+S.db.length+")":mode==="ing"?"Ингредиент":"Добавить: "+LBL[am];
 function step(){const on=i=>!$("v"+i).hidden;
@@ -204,10 +219,10 @@ addEventListener("popstate",async()=>{if(!isOpen)return;
  closeUI()});
 const vv=window.visualViewport;function fit(){if(!vv)return;const o=$("ov");o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px"}
 if(vv){vv.addEventListener("resize",fit);vv.addEventListener("scroll",fit)}
-let sx=0,sy=0,gd=0,ab=0,at=0,st=0,dgd=0;
-function drag(dx){const el=$("app");if(el._a){el._a.cancel();el._a=null}dgd=1;clearTimeout(el._w);el._w=setTimeout(()=>undrag(),1200);el.style.transition="none";el.style.transform=`translateX(${dx*.35}px)`;el.style.opacity=1-Math.min(.35,Math.abs(dx)/500)}
+let sx=0,sy=0,gd=0,ab=0,at=0,st=0,dgd=0,dgx=0;
+function drag(dx){const el=$("app");if(NB)return;if(el._a){el._a.cancel();el._a=null}if(!dgd)dgx=0;dgd=1;if(!dgx&&Math.abs(dx)>56){dgx=1;hap(8)}else if(dgx&&Math.abs(dx)<=56)dgx=0;clearTimeout(el._w);el._w=setTimeout(()=>undrag(),1200);el.style.transition="none";el.style.transform=`translateX(${dx*.35}px)`;el.style.opacity=1-Math.min(.35,Math.abs(dx)/500)}
 function undrag(c){if(!dgd)return;dgd=0;const el=$("app");clearTimeout(el._w);if(c){el.style.transition=el.style.transform=el.style.opacity="";return}el.style.transition="transform .22s cubic-bezier(.22,1,.36,1),opacity .22s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!dgd)el.style.transition=""},240)}
-addEventListener("touchstart",e=>{if(dgd)undrag(1);if(isOpen)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();gd=0;ab=scrollY+innerHeight>=document.documentElement.scrollHeight-4;at=scrollY<=2},{passive:true});
+addEventListener("touchstart",e=>{if(dgd)undrag(1);bindT(e.target);if(isOpen)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();gd=0;ab=scrollY+innerHeight>=document.documentElement.scrollHeight-4;at=scrollY<=2},{passive:true});
 function lum(h){const n=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)};return .2126*f(n>>16&255)+.7152*f(n>>8&255)+.0722*f(n&255)}
 function act(a){const d=(document.documentElement.dataset.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"))==="dark",n=parseInt(a.slice(1),16),m=d?(lum(a)<.15?255:-1):(lum(a)>.3?0:-1);return m<0?a:"#"+[n>>16&255,n>>8&255,n&255].map(v=>Math.round(v*.45+m*.55).toString(16).padStart(2,"0")).join("")}
 function applyAc(){applyTh();const r=document.documentElement,a=S.set&&S.set.ac;if(a&&/^#[0-9a-f]{6}$/i.test(a)){r.style.setProperty("--ac",a);r.style.setProperty("--act",act(a));r.style.setProperty("--on",lum(a)>.45?"#1d2330":"#fff");tc(a)}else{r.style.removeProperty("--ac");r.style.removeProperty("--act");r.style.removeProperty("--on");tc("#2f7de1")}}
@@ -229,16 +244,19 @@ function pull(v,dn){const u=$("pu"),a=dn?(dwOn()?"on":"off"):swAct();if(v<10||a=
  $("pt").textContent=dn?(r?(dwAct()==="today"?"Отпустите — к сегодня":"Отпустите — календарь"):"Потяните ниже"):r?(a==="prod"?"Отпустите — новый продукт":"Отпустите — добавить: "+LBL[autoMeal()]):"Потяните выше";$("pa").textContent=dn?(r?"✓":"↓"):r?"+":"↑"}
 function dwAct(){const v=S.set&&S.set.dw;return v==="today"||v==="off"?v:"cal"}
 function dwOn(){const a=dwAct();return a==="cal"||(a==="today"&&cur!==today)}
-function dwDo(){if(dwAct()==="today"){if(cur!==today){const d=today>cur?1:-1;slide($("app"),d,()=>{cur=today;render()})}}else if(dwAct()==="cal")cal()}
+function dwDo(){if(dwAct()==="today"){if(cur!==today){const d=today>cur?1:-1;NABS=1;slide($("app"),d,()=>{cur=today})}}else if(dwAct()==="cal")cal()}
 function setDw(v){S.set=Object.assign({},S.set,{dw:v});saveq();drawSet()}
-addEventListener("touchmove",e=>{if(isOpen)return;const t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(!gd){if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)*1.5)gd=1;else if(Math.abs(dy)>14)gd=2}
- if(gd===1&&e.touches.length===1){drag(dx);pull(0)}else if(dgd&&e.touches.length>1)undrag(1);else if(gd===1)pull(0);else if(gd===2&&ab&&dy<0&&Math.abs(dx)<60)pull(-dy);else if(gd===2&&at&&dy>0&&Math.abs(dx)<60&&dwOn())pull(dy,1);else pull(0)},{passive:true});
-addEventListener("touchend",e=>{pull(0);if(isOpen||!gd)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy,g=gd;gd=0;
- if(g===1&&(Math.abs(dx)>56||(Math.abs(dx)>28&&Date.now()-st<260))){undrag(1);go(dx<0?1:-1)}else if(g===1)undrag();
+const onMv=e=>{if(e._m)return;e._m=1;if(isOpen)return;const t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(!gd){if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)*1.5)gd=1;else if(Math.abs(dy)>14)gd=2}
+ if(gd===1&&e.touches.length===1){drag(dx);pull(0)}else if(dgd&&e.touches.length>1)undrag(1);else if(gd===1)pull(0);else if(gd===2&&ab&&dy<0&&Math.abs(dx)<60)pull(-dy);else if(gd===2&&at&&dy>0&&Math.abs(dx)<60&&dwOn())pull(dy,1);else pull(0)};addEventListener("touchmove",onMv,{passive:true});
+const onEn=e=>{if(e._e)return;e._e=1;pull(0);if(isOpen||!gd)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy,g=gd;gd=0;
+ if(g===1&&(Math.abs(dx)>56||(Math.abs(dx)>28&&Date.now()-st<260))){GQ=dgx;go(dx<0?1:-1);GQ=0;undrag(1)}else if(g===1)undrag();
  else if(g===2&&at&&dy>TH&&Math.abs(dx)<60&&dwOn())dwDo();
- else if(g===2&&ab&&dy<-TH&&Math.abs(dx)<60&&swAct()!=="off")swipeAct()});
-addEventListener("touchcancel",()=>{pull(0);gd=0;undrag()});
-addEventListener("touchend",e=>{if(dgd&&!e.touches.length){gd=0;undrag()}},{passive:true});
+ else if(g===2&&ab&&dy<-TH&&Math.abs(dx)<60&&swAct()!=="off")swipeAct()};addEventListener("touchend",onEn);
+const onCn=()=>{pull(0);gd=0;undrag()};addEventListener("touchcancel",onCn);
+const onEn2=e=>{if(e._f)return;e._f=1;if(dgd&&!e.touches.length){gd=0;undrag()}};addEventListener("touchend",onEn2,{passive:true});
+// render() пересобирает #app и удаляет элемент, где началось касание: события тогда не доходят до window.
+// Поэтому слушаем касание ещё и на самом элементе-старте.
+function bindT(t){if(!t||!t.addEventListener||t===document||t===window)return;const rm=()=>{t.removeEventListener("touchmove",onMv);t.removeEventListener("touchend",fin);t.removeEventListener("touchcancel",fin)};const fin=e=>{onEn(e);onEn2(e);if(e.type==="touchcancel")onCn();if(!e.touches.length)rm()};t.addEventListener("touchmove",onMv,{passive:true});t.addEventListener("touchend",fin);t.addEventListener("touchcancel",fin)}
 addEventListener("blur",()=>undrag(1));document.addEventListener("visibilitychange",()=>undrag(1));
 (()=>{const h=document.querySelector("#ov .hd"),s=document.querySelector("#ov .sh");let y0=null,dy=0;
  h.addEventListener("touchstart",e=>{y0=e.touches[0].clientY;dy=0;s.style.transition="none"},{passive:true});
