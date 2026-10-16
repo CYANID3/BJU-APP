@@ -8,7 +8,7 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171c;--card:#1e232b;--tx:#eceff4;--mu:#98a1b0;--bd:#2c333d;--ac:#5b9cf0;--p:#5b9cf0;--f:#f0b94d;--c:#4cc48a;--dg:#ef6b6b}}
 :root[data-theme="dark"]{--bg:#14171c;--card:#1e232b;--tx:#eceff4;--mu:#98a1b0;--bd:#2c333d;--ac:#5b9cf0;--p:#5b9cf0;--f:#f0b94d;--c:#4cc48a;--dg:#ef6b6b}
 html{background:var(--bg);overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
+*{box-sizing:border-box}#app{will-change:transform,opacity}
 body{margin:0 auto;background:var(--bg);color:var(--tx);font:16px/1.35 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;max-width:520px;padding:12px 12px 40px}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;transition:transform .12s,opacity .12s;-webkit-user-select:none;user-select:none}button:active{transform:scale(.96);opacity:.85}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
@@ -120,7 +120,7 @@ function render(){
  MEALS.forEach((m,mi)=>{const it=E.map((e,i)=>[e,i]).filter(x=>x[0].m===mi),sk=dk(it.map(x=>x[0]));
   h+=`<div class="card${SN[mi]?' sn':''}"><div class="mh"><div><b>${m}</b> <span class="mu">${sk?sk+" ккал":""}</span></div><span style="display:flex;align-items:center;gap:4px">${it.length?`<button class="x" onclick="cm1(${mi})" aria-label="Копировать приём в другой день">⧉</button>`:""}<button class="add" onclick="op(${mi})" aria-label="Добавить"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2v14M2 9h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></button></span></div>`+
   it.map(([e,i])=>`<div class="it" data-i="${i}"><div><div class="n">${esc(e.n)}</div><div class="mu">${e.ul?e.q+" "+esc(e.ul)+" · ":""}${r1(e.g)} г · Б ${r1(e.p)} · Ж ${r1(e.f)} · У ${r1(e.c)}</div></div><b>${kc(e.p,e.f,e.c)}</b><button class="x" onclick="del(${i})" aria-label="Удалить">✕</button></div>`).join("")+`</div>`});
- const y=scrollY,old=[...document.querySelectorAll("#app .bar i")].map(i=>i.style.width);$("app").innerHTML=h;scrollTo(0,y);if(old.length)document.querySelectorAll("#app .bar i").forEach((el,k)=>{if(old[k]&&old[k]!==el.style.width)try{el.animate([{width:old[k]},{width:el.style.width}],{duration:380,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}})}
+ const y=scrollY,old=[...document.querySelectorAll("#app .bar i")].map(i=>{const w=i.parentElement.getBoundingClientRect().width;return w?i.getBoundingClientRect().width/w*100:0});$("app").innerHTML=h;scrollTo(0,y);if(old.length)document.querySelectorAll("#app .bar i").forEach((el,k)=>{const nw=parseFloat(el.style.width);if(old[k]!=null&&Math.abs(old[k]-nw)>.5)try{el.animate([{width:old[k]+"%"},{width:nw+"%"}],{duration:380,delay:NAV&&!RM()?170:0,fill:"backwards",easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}})}
 let lt=0,lti=-1;function tp(i){const n=Date.now();if(lti===i&&n-lt<500){lt=0;lti=-1;ee(i)}else{lt=n;lti=i}}
 addEventListener("pointerup",e=>{if(isOpen||e.button>0)return;const t=e.target;if(!t.closest||t.closest("button"))return;const it=t.closest("#app .it");if(it)tp(+it.dataset.i)});
 function cpy(k){S.d[cur]=(S.d[k]||[]).map(e=>({...e}));save();render();toast("Скопировано записей: "+S.d[cur].length)}
@@ -191,9 +191,8 @@ function drawCal(){const[y,m]=cm,gk=kc(S.g.p,S.g.f,S.g.c),g=$("cg"),ty=+today.sl
 function pd(k){if(cpm>=0){const mi=cpm,it=(S.d[cur]||[]).filter(e=>e.m===mi).map(e=>({...e}));cpm=-1;if(k===cur){cl();return}(S.d[k]=S.d[k]||[]).push(...it);cl();cur=k;save();render();toast("Скопировано записей: "+it.length);return}if(k===cur){cl();return}const dir=k>cur?1:-1;cl();slide($("app"),dir,()=>{cur=k;render()})}
 $("v6").addEventListener("touchstart",e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
 $("v6").addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;tx=null;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)mv(dx<0?1:-1)});
-const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;function slide(el,n,fn){if(el._b||!el.animate||RM()){fn();return}el._b=1;const done=()=>{el._b=0};setTimeout(done,700);
- try{const o=el.animate([{opacity:1,transform:"none"},{opacity:0,transform:`translateX(${-n*32}px)`}],{duration:110,easing:"ease-in",fill:"forwards"});
-  o.onfinish=()=>{fn();o.cancel();try{const i=el.animate([{opacity:0,transform:`translateX(${n*32}px)`},{opacity:1,transform:"none"}],{duration:240,easing:"cubic-bezier(.22,1,.36,1)"});i.onfinish=i.oncancel=done}catch(e){done()}}}catch(e){done();fn()}}
+let NAV=0;const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;function slide(el,n,fn){NAV=1;try{fn()}finally{NAV=0}if(RM()||!el.animate)return;
+ try{if(el._a)el._a.cancel();const a=el._a=el.animate([{opacity:.3,transform:`translateX(${n*28}px)`},{opacity:1,transform:"none"}],{duration:200,easing:"cubic-bezier(.22,1,.36,1)"});a.onfinish=a.oncancel=()=>{if(el._a===a)el._a=null}}catch(e){}}
 function fade(el){if(RM())return;try{el.animate([{opacity:0,transform:"scale(.96)"},{opacity:1,transform:"none"}],{duration:200,easing:"cubic-bezier(.22,1,.36,1)"})}catch(e){}}
 const vt=()=>mode==="mng"?"Все продукты ("+S.db.length+")":mode==="ing"?"Ингредиент":"Добавить: "+LBL[am];
 function step(){const on=i=>!$("v"+i).hidden;
@@ -205,8 +204,10 @@ addEventListener("popstate",async()=>{if(!isOpen)return;
  closeUI()});
 const vv=window.visualViewport;function fit(){if(!vv)return;const o=$("ov");o.style.top=vv.offsetTop+"px";o.style.height=vv.height+"px"}
 if(vv){vv.addEventListener("resize",fit);vv.addEventListener("scroll",fit)}
-let sx=0,sy=0,gd=0,ab=0,at=0;
-addEventListener("touchstart",e=>{if(isOpen)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;gd=0;ab=scrollY+innerHeight>=document.documentElement.scrollHeight-4;at=scrollY<=2},{passive:true});
+let sx=0,sy=0,gd=0,ab=0,at=0,st=0,dgd=0;
+function drag(dx){const el=$("app");if(el._a){el._a.cancel();el._a=null}dgd=1;el.style.transition="none";el.style.transform=`translateX(${dx*.35}px)`;el.style.opacity=1-Math.min(.35,Math.abs(dx)/500)}
+function undrag(c){if(!dgd)return;dgd=0;const el=$("app");if(c){el.style.transition=el.style.transform=el.style.opacity="";return}el.style.transition="transform .22s cubic-bezier(.22,1,.36,1),opacity .22s";el.style.transform="";el.style.opacity="";setTimeout(()=>{if(!dgd)el.style.transition=""},240)}
+addEventListener("touchstart",e=>{if(isOpen)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;st=Date.now();gd=0;ab=scrollY+innerHeight>=document.documentElement.scrollHeight-4;at=scrollY<=2},{passive:true});
 function lum(h){const n=parseInt(h.slice(1),16),f=c=>{c/=255;return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)};return .2126*f(n>>16&255)+.7152*f(n>>8&255)+.0722*f(n&255)}
 function act(a){const d=(document.documentElement.dataset.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"))==="dark",n=parseInt(a.slice(1),16),m=d?(lum(a)<.15?255:-1):(lum(a)>.3?0:-1);return m<0?a:"#"+[n>>16&255,n>>8&255,n&255].map(v=>Math.round(v*.45+m*.55).toString(16).padStart(2,"0")).join("")}
 function applyAc(){applyTh();const r=document.documentElement,a=S.set&&S.set.ac;if(a&&/^#[0-9a-f]{6}$/i.test(a)){r.style.setProperty("--ac",a);r.style.setProperty("--act",act(a));r.style.setProperty("--on",lum(a)>.45?"#1d2330":"#fff");tc(a)}else{r.style.removeProperty("--ac");r.style.removeProperty("--act");r.style.removeProperty("--on");tc("#2f7de1")}}
@@ -231,12 +232,12 @@ function dwOn(){const a=dwAct();return a==="cal"||(a==="today"&&cur!==today)}
 function dwDo(){if(dwAct()==="today"){if(cur!==today){const d=today>cur?1:-1;slide($("app"),d,()=>{cur=today;render()})}}else if(dwAct()==="cal")cal()}
 function setDw(v){S.set=Object.assign({},S.set,{dw:v});saveq();drawSet()}
 addEventListener("touchmove",e=>{if(isOpen)return;const t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(!gd){if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)*1.5)gd=1;else if(Math.abs(dy)>14)gd=2}
- if(gd===2&&ab&&dy<0&&Math.abs(dx)<60)pull(-dy);else if(gd===2&&at&&dy>0&&Math.abs(dx)<60&&dwOn())pull(dy,1);else pull(0)},{passive:true});
+ if(gd===1){drag(dx);pull(0)}else if(gd===2&&ab&&dy<0&&Math.abs(dx)<60)pull(-dy);else if(gd===2&&at&&dy>0&&Math.abs(dx)<60&&dwOn())pull(dy,1);else pull(0)},{passive:true});
 addEventListener("touchend",e=>{pull(0);if(isOpen||!gd)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy,g=gd;gd=0;
- if(g===1&&Math.abs(dx)>70)go(dx<0?1:-1);
+ if(g===1&&(Math.abs(dx)>56||(Math.abs(dx)>28&&Date.now()-st<260))){undrag(1);go(dx<0?1:-1)}else if(g===1)undrag();
  else if(g===2&&at&&dy>TH&&Math.abs(dx)<60&&dwOn())dwDo();
  else if(g===2&&ab&&dy<-TH&&Math.abs(dx)<60&&swAct()!=="off")swipeAct()});
-addEventListener("touchcancel",()=>{pull(0);gd=0});
+addEventListener("touchcancel",()=>{pull(0);gd=0;undrag()});
 (()=>{const h=document.querySelector("#ov .hd"),s=document.querySelector("#ov .sh");let y0=null,dy=0;
  h.addEventListener("touchstart",e=>{y0=e.touches[0].clientY;dy=0;s.style.transition="none"},{passive:true});
  h.addEventListener("touchmove",e=>{if(y0===null)return;dy=Math.max(0,e.touches[0].clientY-y0);s.style.transform=`translateY(${dy}px)`},{passive:true});
